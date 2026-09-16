@@ -1,0 +1,28 @@
+# --- Gradle ---
+.gradle/
+build/
+# O wrapper (gradlew, gradlew.bat, gradle/wrapper/) DEVE ser versionado:
+# e ele que garante que todo mundo compila com a mesma versao do Gradle.
+
+# --- Kotlin ---
+.kotlin/
+
+# --- IntelliJ IDEA / Android Studio ---
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+
+# --- Artefatos de crash e profiling da JVM ---
+*.hprof
+hs_err_pid*.log
+replay_pid*.log
+
+# --- Logs ---
+*.log
+
+# --- Sistema operacional ---
+.DS_Store
+Thumbs.db
+desktop.ini
