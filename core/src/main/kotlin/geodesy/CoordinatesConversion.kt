@@ -3,6 +3,7 @@ package geodesy
 import datum.WGS84
 import model.Coordinates
 import model.ECEF
+import model.ENU
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.pow
@@ -43,6 +44,40 @@ fun Coordinates.toECEF() : ECEF {
     val ecef = ECEF(x, y, z)
 
     return ecef
+}
+
+fun ECEF.toENU(anchor: Coordinates) : ENU {
+    val anchorEcef = anchor.toECEF()
+
+    val deltaX = this.x - anchorEcef.x
+    val deltaY = this.y - anchorEcef.y
+    val deltaZ = this.z - anchorEcef.z
+
+    val latitude = Math.toRadians(anchor.latitude)
+    val longitude = Math.toRadians(anchor.longitude)
+
+    val east = -sin(longitude) * deltaX + cos(longitude) * deltaY
+    val north = -sin(latitude) * cos(longitude) * deltaX - sin(latitude) * sin(longitude) * deltaY + cos(latitude) * deltaZ
+    val up = cos(latitude) * cos(longitude) * deltaX + cos(latitude) * sin(longitude) * deltaY + sin(latitude) * deltaZ
+
+    return ENU(east, north, up)
+}
+
+fun ENU.toECEF(anchor: Coordinates) : ECEF {
+    val anchorEcef = anchor.toECEF()
+
+    val latitude = Math.toRadians(anchor.latitude)
+    val longitude = Math.toRadians(anchor.longitude)
+
+    val deltaX = -sin(longitude) * this.east - sin(latitude) * cos(longitude) * this.north + cos(latitude) * cos(longitude) * this.up
+    val deltaY = cos(longitude) * this.east - sin(latitude) * sin(longitude) * this.north + cos(latitude) * sin(longitude) * this.up
+    val deltaZ = cos(latitude) * this.north + sin(latitude) * this.up
+
+    val x = anchorEcef.x + deltaX
+    val y = anchorEcef.y + deltaY
+    val z = anchorEcef.z + deltaZ
+
+    return ECEF(x, y, z)
 }
 
 fun Double.primeVerticalRadius() = WGS84.A / (sqrt(1 - WGS84.E2 * sin(this).pow(2.0)))

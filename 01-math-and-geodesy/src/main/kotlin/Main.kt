@@ -3,6 +3,7 @@ import geodesy.toCoordinates
 import geodesy.toECEF
 import model.Coordinates
 import model.ECEF
+import utils.readDouble
 
 fun main() {
     val options = listOf(
@@ -44,7 +45,7 @@ private fun selectOption(options: List<String>) : Int {
         if (choice != null && choice in 1..options.size) {
             return choice
         } else {
-            println("Invalid option. Try again.\n")
+            println("\nInvalid option. Try again.\n")
         }
     }
 }
@@ -81,16 +82,3 @@ private fun calculateEcefToGeodetic() {
             "\nAltitude: ${coordinates.altitude.formatNumber()}m")
 }
 
-private fun readDouble(prompt: String): Double {
-    while (true) {
-        print(prompt)
-        val input = readlnOrNull()?.trim()?.replace(',', '.')
-        val value = input?.toDoubleOrNull()
-
-        if (value != null) {
-            return value
-        }
-
-        println("Invalid value. Try again.")
-    }
-}
