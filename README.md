@@ -11,7 +11,7 @@ This repository is organized as a Gradle monorepo designed to experiment with, t
 ```text
 geospatial-engineering-lab/
 ├── 01-math-and-geodesy/       # Ellipsoidal geometry, ECEF, and geodetic transformations
-├── 02-local-frames-enu/      # (Upcoming) Local tangent plane (East, North, Up) transformations
+├── 02-local-frames-enu/      # Local tangent plane (East, North, Up) transformations
 └── 03-utm-projections/       # (Roadmap) Transverse Mercator and UTM grid projections
 ```
 
@@ -23,6 +23,13 @@ geospatial-engineering-lab/
 * **Inverse Transformation:** ECEF $\to$ Geodetic conversion using Bowring's closed-form algorithm.
 * **Interactive CLI:** Terminal loop with sanitized numerical input handling regional decimal formatting.
 * **Automated Tests:** Comprehensive unit test suite using `kotlin.test` verifying sub-millimeter roundtrip accuracy and prime vertical radius calculations.
+  
+### `02-local-frames-enu`
+* **Local Tangent Plane Model:** `ENU` data class representing metric offsets (East, North, Up) relative to a local reference point.
+* **Direct Transformation:** ECEF $\to$ ENU projection applying the local rotation matrix based on the anchor's geodetic coordinates ($\phi, \lambda$).
+* **Inverse Transformation:** ENU $\to$ ECEF reconstruction using the transpose matrix and Euclidean offset aggregation.
+* **Interactive CLI:** Terminal loop supporting bi-directional conversion with anchor/target coordinate prompts and input validation.
+* **Automated Tests:** Comprehensive unit test suite using `kotlin.test` verifying origin zeroing and sub-millimeter roundtrip consistency.
 
 ## Tech Stack
 
