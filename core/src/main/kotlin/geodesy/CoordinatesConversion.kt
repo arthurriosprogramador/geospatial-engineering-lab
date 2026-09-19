@@ -154,15 +154,15 @@ fun Coordinates.toUTM() : UTMCoordinates {
     val ellipsoidalCurvatureCorrection = WGS84.E_PRIME2 * cos(radiansLat).pow(2.0)
 
     val meridianArch = WGS84.A * (
-        (1 - WGS84.E2 / 4 - (3 * WGS84.E2.pow(2.0)) / 64 - (5 * WGS84.E2.pow(3.0)) / 256) * radiansLat
-        - (3 * WGS84.E2 / 8 + (3 * WGS84.E2.pow(2.0)) / 32 + (45 * WGS84.E2.pow(3.0)) / 1024) * sin(2 * radiansLat)
-        + ((15 * WGS84.E2.pow(2.0)) / 256 + (45 * WGS84.E2.pow(3.0)) / 1024) * sin(4 * radiansLat)
-        - ((35 * WGS84.E2.pow(3.0)) / 3072) * sin(6 * radiansLat)
-    )
+            (1 - WGS84.E2 / 4 - (3 * WGS84.E2.pow(2.0)) / 64 - (5 * WGS84.E2.pow(3.0)) / 256) * radiansLat
+                    - (3 * WGS84.E2 / 8 + (3 * WGS84.E2.pow(2.0)) / 32 + (45 * WGS84.E2.pow(3.0)) / 1024) * sin(2 * radiansLat)
+                    + ((15 * WGS84.E2.pow(2.0)) / 256 + (45 * WGS84.E2.pow(3.0)) / 1024) * sin(4 * radiansLat)
+                    - ((35 * WGS84.E2.pow(3.0)) / 3072) * sin(6 * radiansLat)
+            )
     val easting = UTMSpatialReference.FALSE_EASTING + UTMSpatialReference.CENTRAL_MERIDIAN_SCALE_FACTOR * radiansLat.primeVerticalRadius() * (
-        angularOffsetTerm + (1 - tanLatSquared + ellipsoidalCurvatureCorrection) * (angularOffsetTerm.pow(3.0) / 6.0)
-        + (5 - 18 * tanLatSquared + tanLatSquared.pow(2.0) + 72 * ellipsoidalCurvatureCorrection - 58 * WGS84.E_PRIME2) * (angularOffsetTerm.pow(5.0) / 120)
-    )
+            angularOffsetTerm + (1 - tanLatSquared + ellipsoidalCurvatureCorrection) * (angularOffsetTerm.pow(3.0) / 6.0)
+                    + (5 - 18 * tanLatSquared + tanLatSquared.pow(2.0) + 72 * ellipsoidalCurvatureCorrection - 58 * WGS84.E_PRIME2) * (angularOffsetTerm.pow(5.0) / 120)
+            )
     var northing =UTMSpatialReference.CENTRAL_MERIDIAN_SCALE_FACTOR * (
         meridianArch + radiansLat.primeVerticalRadius() * tan(radiansLat) * (
             (angularOffsetTerm.pow(2.0) / 2.0)

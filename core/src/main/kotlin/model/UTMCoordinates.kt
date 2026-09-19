@@ -13,5 +13,9 @@ data class UTMCoordinates(
 }
 
 enum class Hemisphere {
-    NORTH, SOUTH
+    NORTH, SOUTH;
+
+    companion object {
+        fun isNorthOrSouth(hemisphere: String) : Hemisphere = if (hemisphere.uppercase() == "N") NORTH else SOUTH
+    }
 }
