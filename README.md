@@ -11,8 +11,8 @@ This repository is organized as a Gradle monorepo designed to experiment with, t
 ```text
 geospatial-engineering-lab/
 ├── 01-math-and-geodesy/       # Ellipsoidal geometry, ECEF, and geodetic transformations
-├── 02-local-frames-enu/      # Local tangent plane (East, North, Up) transformations
-└── 03-utm-projections/       # (Roadmap) Transverse Mercator and UTM grid projections
+├── 02-local-frames-enu/       # Local tangent plane (East, North, Up) transformations
+└── 03-utm-projections/        # Transverse Mercator and UTM grid projections
 ```
 
 ## Modules
@@ -31,6 +31,13 @@ geospatial-engineering-lab/
 * **Interactive CLI:** Terminal loop supporting bi-directional conversion with anchor/target coordinate prompts and input validation.
 * **Automated Tests:** Comprehensive unit test suite using `kotlin.test` verifying origin zeroing and sub-millimeter roundtrip consistency.
 
+### `03-utm-projections`
+* **Cartographic Projection Model:** `UTMCoordinates` data class encapsulating Easting, Northing, Zone (1-60), and Hemisphere (North/South).
+* **Direct Transformation:** Geodetic coordinates $(\phi, \lambda) \to \text{UTM } (E, N)$ using Redfearn's transverse ellipsoidal series expansion up to 6th order.
+* **Inverse Transformation:** UTM $\to$ Geodetic coordinates applying the footprint latitude ($\phi_1$) derived from rectifying sphere geometry and inverse Taylor corrections.
+* **Interactive CLI:** Terminal application allowing seamless forward/inverse UTM conversion with coordinate validation and hemisphere handling.
+* **Automated Tests:** Comprehensive unit test suite validating numerical roundtrip consistency across equatorial and mid-latitude boundaries.
+  
 ## Tech Stack
 
 * **Language:** Kotlin (JVM 17+)
