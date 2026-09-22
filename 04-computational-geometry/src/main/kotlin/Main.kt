@@ -6,20 +6,20 @@ import model.Polygon2D
 import spatial.contains
 import utils.*
 
-private const val pointsPrompt = "Please type the point coordinates separated by comma and use semicolons to " +
-        "separate points (E.g.: 0,0;3,4): "
-private const val singlePointPrompt = "Please type the point coordinates separated by comma (E.g.: 3,4): "
+private const val pointsPrompt = "Please type the point coordinates separated by space and use comma to " +
+        "separate points (E.g.: 0 0, 3 4): "
+private const val singlePointPrompt = "Please type the point coordinates separated by comma (E.g.: 3 4): "
 private const val segmentPrompt =
-    "Please type the start and final segment point coordinates separated by comma and use semicolons to " +
-            "separate points (E.g.: 0,0;3,4): "
+    "Please type the start and final segment point coordinates separated by space and use comma to " +
+            "separate points (E.g.: 0 0, 3 4): "
 private const val hasHolePrompt = "Does the polygon have holes? (y/n): "
 private const val exteriorRingPrompt =
     "Please type at least 3 points to make an exterior ring. The point coordinates " +
-            "separated by comma and use semicolons to separate points (E.g.: 0,0;3,4): "
+            "separated by space and use comma to separate points (E.g.: 0 0, 3 4): "
 private const val holesQuantityPrompt = "Please type how many holes the polygon has: "
 private const val holePrompt =
     "Please type at least 3 points to make an interior ring. The point coordinates should be " +
-            "separated by comma and use semicolons to separate points (E.g.: 0,0;3,4): "
+            "separated by space and use comma to separate points (E.g.: 0 0, 3 4): "
 
 fun main() {
     startProgram()
@@ -122,28 +122,12 @@ private fun calculateSegmentLengthAndPointOrientation() {
 }
 
 private fun calculateRingPolygonArea() {
-    println("------------------------------------------------------------------------------------------------------------")
-    val exteriorRing = readLinearRing(exteriorRingPrompt)
-    println("------------------------------------------------------------------------------------------------------------")
-    val hasHoles = readBoolean(hasHolePrompt)
-    println("------------------------------------------------------------------------------------------------------------")
-    var holesCount = 0
-    val holes = mutableListOf<LinearRing2D>()
-    if (hasHoles) {
-        holesCount = readInt(holesQuantityPrompt)
-        println("------------------------------------------------------------------------------------------------------------")
-        for (hole in 0 until holesCount) {
-            holes.add(readLinearRing(holePrompt))
-        }
-        println("------------------------------------------------------------------------------------------------------------")
-    }
+    val polygon = readPolygon()
 
-    val polygon = Polygon2D(exteriorRing, holes)
-
-    println("Exterior ring has ${exteriorRing.area()}m²")
-    if (hasHoles) {
-        println("The polygon has $holesCount holes, each of them with: ")
-        for (hole in holes) {
+    println("Exterior ring has ${polygon.exteriorRing.area()}m²")
+    if (polygon.interiorRings.isNotEmpty()) {
+        println("The polygon has ${polygon.interiorRings.size} holes, each of them with: ")
+        for (hole in polygon.interiorRings) {
             println("${hole.area()}m²")
         }
     }
@@ -152,35 +136,41 @@ private fun calculateRingPolygonArea() {
 }
 
 private fun calculatePointInPolygonContainment() {
-    println("------------------------------------------------------------------------------------------------------------")
-    val exteriorRing = readLinearRing(exteriorRingPrompt)
-    println("------------------------------------------------------------------------------------------------------------")
-    val hasHoles = readBoolean(hasHolePrompt)
-    println("------------------------------------------------------------------------------------------------------------")
-    var holesQuantity = 0
-    val holes = mutableListOf<LinearRing2D>()
-    if (hasHoles) {
-        holesQuantity = readInt(holesQuantityPrompt)
-        println("------------------------------------------------------------------------------------------------------------")
-        for (hole in 0 until holesQuantity) {
-            holes.add(readLinearRing(holePrompt))
-        }
-        println("------------------------------------------------------------------------------------------------------------")
-    }
+    val polygon = readPolygon()
+
     val point = readPointList(singlePointPrompt, false).first()
     println("------------------------------------------------------------------------------------------------------------------------")
 
-    val polygon = Polygon2D(exteriorRing, holes)
     val isInside = polygon.contains(point)
     val containmentLabel = if (isInside) "inside" else "outside"
     if (isInside) {
         println("The point is $containmentLabel of the polygon.\n")
     } else {
         var holesWithCollisionQuantity = 0
-        holes.forEach {
+        polygon.interiorRings.forEach {
             if (it.contains(point)) holesWithCollisionQuantity++
         }
         println("The point is $containmentLabel of the polygon and the point collides with $holesWithCollisionQuantity hole(s).\n")
     }
+}
+
+fun readPolygon(): Polygon2D {
+    println("------------------------------------------------------------------------------------------------------------")
+    val exteriorRing = readLinearRing(exteriorRingPrompt)
+    println("------------------------------------------------------------------------------------------------------------")
+    val hasHoles = readBoolean(hasHolePrompt)
+    println("------------------------------------------------------------------------------------------------------------")
+
+    val holes = mutableListOf<LinearRing2D>()
+
+    if (hasHoles) {
+        val count = readInt(holesQuantityPrompt)
+        println("------------------------------------------------------------------------------------------------------------")
+        for (i in 0 until count) {
+            holes.add(readLinearRing(holePrompt))
+        }
+        println("------------------------------------------------------------------------------------------------------------")
+    }
+    return Polygon2D(exteriorRing, holes)
 }
 

@@ -1,16 +1,12 @@
 package formatter
 
-import java.math.RoundingMode
-import java.text.DecimalFormat
-import java.text.DecimalFormatSymbols
-import java.util.Locale
+import kotlin.math.floor
+import kotlin.math.pow
 
-fun Double.formatNumber() : String {
-    val symbols = DecimalFormatSymbols(Locale.US)
-    val df = DecimalFormat("#.######", symbols).apply {
-        roundingMode = RoundingMode.FLOOR
-    }
+fun Double.formatNumber(decimalPlaces: Int = 6) : String {
+    val precision = 10.0.pow(decimalPlaces)
+    val truncated = floor(this * precision) / precision
 
-    return df.format(this)
+    return truncated.toString().removeSuffix(".0")
 }
 
