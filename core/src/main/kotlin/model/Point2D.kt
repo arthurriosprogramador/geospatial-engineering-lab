@@ -5,7 +5,7 @@ data class Point2D(
     val y: Double
 ) {
     /**
-     * Subtract two points results in a vector that points to [other] until [this].
+     * Subtracts two points results in a vector that points to [other] until [this].
      *
      * E.g.: B - A = vector from A to B.
      */

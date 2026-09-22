@@ -13,7 +13,7 @@ class GeodeticTransformTest {
     private val meterTolerance = 0.01
 
     @Test
-    fun `should convert Geodetic to ECEF on Equador and Meridian zero`() {
+    fun `should convert Geodetic to ECEF on Equator and Meridian zero`() {
         val origin = Coordinates(latitude = 0.0, longitude = 0.0, altitude = 0.0)
         val ecef = origin.toECEF()
 

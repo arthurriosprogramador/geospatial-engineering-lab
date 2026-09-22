@@ -24,7 +24,7 @@ data class Vector2D(
     /**
      * # Dot Product
      *
-     * Used to know the projection, angle between vectors and orthogonality.
+     * Used to determine the projection, angle between vectors and orthogonality.
      * If the product is equal to 0, the vectors are perpendicular.
      *
      * @param vector the secondary vector to calculate the product against.
@@ -35,7 +35,7 @@ data class Vector2D(
     /**
      * # Cross Product
      *
-     * Used to know the parallelogram area magnitude made by two signed vectors:
+     * Used to determine the parallelogram area magnitude made by two signed vectors:
      *
      * `> 0` : Curve to the **LEFT (Counter-Clockwise)**
      *

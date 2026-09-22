@@ -79,7 +79,13 @@ private fun calculateUTMToCoordinate() {
     println("=======================================\n=======================================")
     val easting = readDouble("Type Easting (e.g.: 500453.32): ")
     val northing = readDouble("Type Northing (e.g.: 10000000.68): ")
-    val zone = readInt("Type Zone (e.g.: 24): ")
+    var zone = readInt("Type Zone (e.g.: 24): ")
+
+    if (zone !in 1..60) {
+        println("Invalid Zone! The zone should be between 1 and 60")
+        zone = readInt("Type Zone (e.g.: 24): ")
+    }
+
     var hemisphereInput = ""
     while (true) {
         hemisphereInput = readString("\nType N to North or S to South (N/S): ")

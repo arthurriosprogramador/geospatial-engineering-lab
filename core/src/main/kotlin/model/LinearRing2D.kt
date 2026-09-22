@@ -30,11 +30,11 @@ data class LinearRing2D(
         var maxX = Double.NEGATIVE_INFINITY
         var maxY = Double.NEGATIVE_INFINITY
 
-        for (v in vertices) {
-            if (v.x < minX) minX = v.x
-            if (v.y < minY) minY = v.y
-            if (v.x > maxX) maxX = v.x
-            if (v.y > maxY) maxY = v.y
+        for ((x, y) in vertices) {
+            if (x < minX) minX = x
+            if (y < minY) minY = y
+            if (x > maxX) maxX = x
+            if (y > maxY) maxY = y
         }
 
         BoundingBox2D(minX, minY, maxX, maxY)

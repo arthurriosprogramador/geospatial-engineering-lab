@@ -141,7 +141,7 @@ fun UTMCoordinates.toCoordinates(): Coordinates {
 }
 
 fun Coordinates.toUTM() : UTMCoordinates {
-    val zone = (((this.longitude + 180.0) / 6.0).toInt() + 1).coerceAtMost(60)
+    val zone = (((this.longitude + 180.0) / 6.0).toInt() + 1).coerceIn(1 ,60)
     val centralMeridian = (zone * 6.0) - 183.0
 
     val radiansLat = Math.toRadians(this.latitude)
