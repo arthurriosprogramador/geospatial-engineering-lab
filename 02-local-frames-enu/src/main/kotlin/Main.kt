@@ -3,7 +3,6 @@ import geodesy.toECEF
 import geodesy.toENU
 import model.Coordinates
 import model.ENU
-import utils.readDouble
 
 fun main() {
     val options = listOf(
@@ -16,9 +15,7 @@ fun main() {
 }
 
 private fun startProgram(options: List<String>) {
-    println("Hi, welcome to ENU/ECEF converter!")
-    println("=======================================\n=======================================")
-    println("To convert the ENU to ECEF - or vice-versa - you'll need an anchor coordinate and a target coordinate.")
+    printTitle("Hi, welcome to ENU/ECEF converter!\nTo convert the ENU to ECEF - or vice-versa - you'll need an anchor coordinate and a target coordinate.")
     while (true) {
         val selectedOption = selectOption(options)
 
@@ -59,18 +56,14 @@ private fun chooseCalculusOption(option: Int) {
 }
 
 private fun calculateECEFToENU() {
-    println("=======================================\n=======================================")
-    println("Anchor coordinates:")
-    println("=======================================\n=======================================")
+    printTitle("Anchor coordinates:")
     val anchorLatitude = readDouble("Enter anchor latitude (e.g.: -47.356): ")
     val anchorLongitude = readDouble("Enter anchor longitude (e.g.: -47.356): ")
     val anchorAltitude = readDouble("Enter anchor altitude (e.g.: -47.356): ")
     val anchor = Coordinates(anchorLatitude, anchorLongitude, anchorAltitude)
     println()
 
-    println("=======================================\n=======================================")
-    println("Target coordinates:")
-    println("=======================================\n=======================================")
+    printTitle("Target coordinates:")
     val targetLatitude = readDouble("Enter target latitude (e.g.: -47.356): ")
     val targetLongitude = readDouble("Enter target longitude (e.g.: -47.356): ")
     val targetAltitude = readDouble("Enter target altitude (e.g.: -47.356): ")
@@ -84,18 +77,14 @@ private fun calculateECEFToENU() {
 }
 
 private fun calculateENUToECEF() {
-    println("=======================================\n=======================================")
-    println("Anchor ECEF:")
-    println("=======================================\n=======================================")
+    printTitle("Anchor ECEF:")
     val anchorLatitude = readDouble("Enter anchor latitude (e.g.: -47.356): ")
     val anchorLongitude = readDouble("Enter anchor longitude (e.g.: -47.356): ")
     val anchorAltitude = readDouble("Enter anchor altitude (e.g.: -47.356): ")
     val anchor = Coordinates(anchorLatitude, anchorLongitude, anchorAltitude)
     println()
 
-    println("=======================================\n=======================================")
-    println("Target ENU:")
-    println("=======================================\n=======================================")
+    printTitle("Target ENU:")
     val targetEast = readDouble("Enter target East (e.g.: 1520,365): ")
     val targetNorth = readDouble("Enter target North (e.g.: 1520,365): ")
     val targetUp = readDouble("Enter target altitude (e.g.: 1520,365): ")

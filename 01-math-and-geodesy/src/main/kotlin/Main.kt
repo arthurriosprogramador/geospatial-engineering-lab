@@ -3,7 +3,6 @@ import geodesy.toCoordinates
 import geodesy.toECEF
 import model.Coordinates
 import model.ECEF
-import utils.readDouble
 
 fun main() {
     val options = listOf(
@@ -58,9 +57,9 @@ private fun chooseCalculusOption(option: Int) {
 }
 
 private fun calculateGeodeticToEcef() {
-    val lat = readDouble("\nType Latitude (e.g.: -47.2): ")
-    val long = readDouble("\nType Longitude (e.g.: -42.3): ")
-    val alt = readDouble("\nType altitude (e.g.: 105.5): ")
+    val lat = readDouble("Type Latitude (e.g.: -47.2): ")
+    val long = readDouble("Type Longitude (e.g.: -42.3): ")
+    val alt = readDouble("Type altitude (e.g.: 105.5): ")
     println()
 
     val coordinates = Coordinates(lat, long, alt)
@@ -70,9 +69,9 @@ private fun calculateGeodeticToEcef() {
 }
 
 private fun calculateEcefToGeodetic() {
-    val x = readDouble("\nType the X axis (e.g.:1170.2): ")
-    val y = readDouble("\nType the y axis (e.g.: 1170.2): ")
-    val z = readDouble("\nType the z axis (e.g.: 1170.2): ")
+    val x = readDouble("Type the X axis (e.g.:1170.2): ")
+    val y = readDouble("Type the y axis (e.g.: 1170.2): ")
+    val z = readDouble("Type the z axis (e.g.: 1170.2): ")
     println()
 
     val ecef = ECEF(x, y, z)

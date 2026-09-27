@@ -26,9 +26,7 @@ fun main() {
 }
 
 private fun startProgram() {
-    println("------------------------------------------------------------")
-    println("=== Hi, welcome to Vector Geometry/Spatial Analysis ===")
-    println("------------------------------------------------------------")
+    printTitle("=== Hi, welcome to Vector Geometry/Spatial Analysis ===")
 
     val options = listOf(
         "Distance & Displacement Vector",
@@ -82,9 +80,7 @@ private fun handleOperationOption(option: Int) {
 }
 
 private fun calculateDistanceAndDisplacementVector() {
-    println("------------------------------------------------------------------------------------------------------------------------")
     val points = readPointList(pointsPrompt)
-    println("------------------------------------------------------------------------------------------------------------------------")
 
     var totalDistance = 0.0
     points.forEachIndexed { index, point ->
@@ -102,11 +98,8 @@ private fun calculateDistanceAndDisplacementVector() {
 }
 
 private fun calculateSegmentLengthAndPointOrientation() {
-    println("------------------------------------------------------------------------------------------------------------------------")
     val segment = readSegment(segmentPrompt)
-    println("------------------------------------------------------------------------------------------------------------------------")
     val point = readPointList(singlePointPrompt, false).first()
-    println("------------------------------------------------------------------------------------------------------------------------")
 
     val segmentLength = segment.length()
     val crossProduct = segment.orientationOf(point)
@@ -139,7 +132,6 @@ private fun calculatePointInPolygonContainment() {
     val polygon = readPolygon()
 
     val point = readPointList(singlePointPrompt, false).first()
-    println("------------------------------------------------------------------------------------------------------------------------")
 
     val isInside = polygon.contains(point)
     val containmentLabel = if (isInside) "inside" else "outside"
@@ -155,21 +147,16 @@ private fun calculatePointInPolygonContainment() {
 }
 
 fun readPolygon(): Polygon2D {
-    println("------------------------------------------------------------------------------------------------------------")
     val exteriorRing = readLinearRing(exteriorRingPrompt)
-    println("------------------------------------------------------------------------------------------------------------")
     val hasHoles = readBoolean(hasHolePrompt)
-    println("------------------------------------------------------------------------------------------------------------")
 
     val holes = mutableListOf<LinearRing2D>()
 
     if (hasHoles) {
         val count = readInt(holesQuantityPrompt)
-        println("------------------------------------------------------------------------------------------------------------")
         for (i in 0 until count) {
             holes.add(readLinearRing(holePrompt))
         }
-        println("------------------------------------------------------------------------------------------------------------")
     }
     return Polygon2D(exteriorRing, holes)
 }

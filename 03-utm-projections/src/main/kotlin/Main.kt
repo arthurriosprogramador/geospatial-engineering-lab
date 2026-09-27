@@ -4,9 +4,6 @@ import geodesy.toUTM
 import model.Coordinates
 import model.Hemisphere
 import model.UTMCoordinates
-import utils.readDouble
-import utils.readInt
-import utils.readString
 
 fun main() {
     startProgram()
@@ -60,9 +57,7 @@ private fun chooseCalculusOption(option: Int) {
 }
 
 private fun calculateCoordinatesToUTM() {
-    println("=======================================\n=======================================")
     println("Coordinates:")
-    println("=======================================\n=======================================")
     val latitude = readDouble("Enter anchor latitude (e.g.: -47.356): ")
     val longitude = readDouble("Enter anchor longitude (e.g.: -47.356): ")
     val coordinates = Coordinates(latitude, longitude, 0.0)
@@ -74,9 +69,7 @@ private fun calculateCoordinatesToUTM() {
 }
 
 private fun calculateUTMToCoordinate() {
-    println("=======================================\n=======================================")
     println("UTM coordinates:")
-    println("=======================================\n=======================================")
     val easting = readDouble("Type Easting (e.g.: 500453.32): ")
     val northing = readDouble("Type Northing (e.g.: 10000000.68): ")
     var zone = readInt("Type Zone (e.g.: 24): ")
