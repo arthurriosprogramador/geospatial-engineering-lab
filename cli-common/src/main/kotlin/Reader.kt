@@ -7,6 +7,7 @@ fun readDouble(prompt: String): Double {
         printSameLinePrompt(prompt)
         val input = readlnOrNull()?.trim()?.replace(',', '.')
         val value = input?.toDoubleOrNull()
+        prompt.printDividerByPrompt()
 
         if (value != null) {
             return value
@@ -21,6 +22,7 @@ fun readInt(prompt: String): Int {
         printSameLinePrompt(prompt)
         val input = readlnOrNull()?.trim()
         val value = input?.toIntOrNull()
+        prompt.printDividerByPrompt()
 
         if (value != null) {
             return value
@@ -34,6 +36,7 @@ fun readString(prompt: String): String {
     while (true) {
         printSameLinePrompt(prompt)
         val input = readlnOrNull()?.trim()
+        prompt.printDividerByPrompt()
 
         if (input != null) {
             return input

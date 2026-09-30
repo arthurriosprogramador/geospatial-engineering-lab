@@ -1,6 +1,49 @@
 import org.jline.terminal.Terminal
 import org.jline.terminal.TerminalBuilder
 import org.jline.utils.NonBlockingReader
+import java.io.PrintWriter
+
+fun PrintWriter.hideCursor(): PrintWriter = apply {
+    print("\u001b[?25l")
+}
+
+fun PrintWriter.showCursor(): PrintWriter = apply {
+    print("\u001b[?25h")
+    flush()
+}
+
+fun PrintWriter.clearLine(): PrintWriter = apply {
+    print("\u001b[2K")
+    flush()
+}
+
+fun PrintWriter.clearScreen(): PrintWriter = apply {
+    print("\u001b[H\u001b[2J")
+    flush()
+}
+
+fun PrintWriter.rewindCursor(lines: Int): PrintWriter = apply {
+    if (lines > 0) {
+        print("\u001b[${lines}A")
+        flush()
+    }
+}
+
+fun PrintWriter.resetStyle(): PrintWriter = apply {
+    print(CLIColors.RESET)
+    flush()
+}
+
+fun printStyledPrompt(
+    color: CLIColors,
+    prompt: String,
+    background: CLIColors? = null,
+    shouldBreakLine: Boolean = true,) {
+    val backgroundPrefix = background ?: ""
+    val styledPrompt = "$backgroundPrefix$color$prompt${CLIColors.RESET}"
+
+    if (shouldBreakLine) println(styledPrompt) else print(styledPrompt)
+}
 
 enum class MenuAction {
     UP,
@@ -30,10 +73,6 @@ private fun readMenuAction(reader: NonBlockingReader) : MenuAction {
 }
 
 fun createCLIMenu(options: List<String>, title: String) : Int {
-    val ansiReset = "\u001b[0m"
-    val ansiWhiteBold = "\u001b[1;37m"
-    val kotlinPurple = "\u001b[38;2;127;82;255;1m"
-
     val terminal: Terminal = try {
         TerminalBuilder.builder().system(true).dumb(false).build()
     } catch (_: Exception) {
@@ -56,26 +95,25 @@ fun createCLIMenu(options: List<String>, title: String) : Int {
     var isFirstRender = true
 
     try {
-        out.print("\u001b[?25l")
+        out.hideCursor()
 
         while (true) {
             if (!isFirstRender) {
-                val totalLinesToRewind = options.size + 3
-                out.print("\u001b[${totalLinesToRewind}A")
+                val totalLinesToRewind = options.size + 4
+                out.rewindCursor(totalLinesToRewind)
             }
             isFirstRender = false
 
-            out.print("\u001b[2K")
-            out.println(title)
-            out.print("\u001b[2K")
-            out.println("Navigate with $arrows. Press Enter to choose:\n")
+            out.clearLine()
+            printTitle(title)
+            out.clearLine().println("Navigate with $arrows. Press Enter to choose:")
 
             options.forEachIndexed { i, option ->
-                out.print("\u001b[2K")
+                out.clearLine()
                 if (i == selectedIndex) {
-                    out.println("$kotlinPurple  $pointer $option$ansiReset")
+                    out.println("${CLIColors.BG_WHITE}${CLIColors.KOTLIN_PURPLE}  $pointer $option${CLIColors.RESET}")
                 } else {
-                    out.println("    $ansiWhiteBold$option$ansiReset")
+                    out.println("    ${CLIColors.WHITE_BOLD}$option${CLIColors.RESET}")
                 }
             }
             out.flush()
@@ -88,8 +126,8 @@ fun createCLIMenu(options: List<String>, title: String) : Int {
             }
         }
     } finally {
-        out.print("\u001b[?25h")
-        out.println()
+        out.resetStyle()
+        out.showCursor()
         out.flush()
         terminal.attributes = previousAttributes
         terminal.close()
@@ -119,7 +157,11 @@ fun createFallbackMenu(options: List<String>, title: String): Int {
 fun printTitle(title: String) {
     title.let {
         it.printDividerByPrompt()
-        println(it)
+        printStyledPrompt(
+            color = CLIColors.WHITE_BOLD,
+            background = CLIColors.KOTLIN_PURPLE,
+            prompt = it,
+        )
         it.printDividerByPrompt()
     }
 }
@@ -127,8 +169,7 @@ fun printTitle(title: String) {
 fun printSameLinePrompt(prompt: String) {
     prompt.let {
         it.printDividerByPrompt()
-        println(it)
-        it.printDividerByPrompt()
+        print(it)
     }
 }
 
