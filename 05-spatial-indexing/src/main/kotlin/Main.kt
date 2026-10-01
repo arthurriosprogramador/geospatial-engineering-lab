@@ -1,6 +1,7 @@
 import model.BoundingBox2D
 import model.Point2D
 import model.RTree2D
+import kotlin.random.Random
 
 private const val pointsPrompt = "Please type the point coordinates separated by space and use comma to " +
         "separate points (E.g.: 0 0, 3 4):"
@@ -31,6 +32,7 @@ private fun createMainMenu()  {
 private fun handleOption(option: Int) {
     when (option) {
         1 -> handleManualPoints()
+        2 -> handleRandomDataset()
     }
 }
 
@@ -46,7 +48,6 @@ private fun handleManualPoints() {
     else {
         var pointQuantity = 0
         var isPointQuantityConfirmed = false
-        var pointList: List<Point2D> = emptyList()
 
         while (!isPointQuantityConfirmed) {
             pointQuantity = readPointQuantity()
@@ -57,13 +58,7 @@ private fun handleManualPoints() {
             isPointQuantityConfirmed = readBoolean("Great! You will inform $pointQuantity point(s). Do you confirm? (y/n)")
         }
 
-        pointList = readPointList(pointsPrompt, pointQuantity > 1, pointQuantity)
-
-        val rTree = RTree2D<Point2D>()
-
-        pointList.forEach {
-            rTree.insert(it, it)
-        }
+        val pointList: List<Point2D> = readPointList(pointsPrompt, pointQuantity > 1, pointQuantity)
 
         println("\nNow you must define the bounding box to query the R-Tree:")
         val minX = readDouble("Min X: ")
@@ -73,14 +68,56 @@ private fun handleManualPoints() {
 
         val queryBox = BoundingBox2D(minX, minY, maxX, maxY)
 
-        val rTreeResult = rTree.search(queryBox)
-
-        val linearResults = pointList.filter { queryBox.contains(it) }
-
-        println()
+        getResult(queryBox, pointList)
     }
 }
 
 private fun readPointQuantity() : Int {
     return readInt("Type how many points do you want: ")
+}
+
+private fun handleRandomDataset() {
+    val minCoord = -1000.0
+    val maxCoord = 1000.0
+    val maxPoints = 500_000
+    val pointQuantity = Random.nextInt(1, maxPoints)
+    val pointList: MutableList<Point2D> = mutableListOf()
+    for (p in 1..pointQuantity) {
+        val x = Random.nextDouble(minCoord, maxCoord)
+        val y = Random.nextDouble(minCoord, maxCoord)
+
+        val point = Point2D(x, y)
+        pointList.add(point)
+    }
+
+    val minX = Random.nextDouble(minCoord, maxCoord)
+    val maxX = minX + Random.nextDouble(minCoord, maxCoord)
+    val minY = Random.nextDouble(minCoord, maxCoord)
+    val maxY = minY + Random.nextDouble(minCoord, maxCoord)
+
+    val boundingBox = BoundingBox2D(minX, minY, maxX, maxY)
+    getResult(boundingBox, pointList)
+}
+
+private fun getResult(boundingBox: BoundingBox2D, pointList: List<Point2D>) {
+
+    val rTree2D = RTree2D<Point2D>()
+
+    pointList.forEach {
+        rTree2D.insert(it, it)
+    }
+
+    val rTreeResult = rTree2D.search(boundingBox)
+    val linearResults = pointList.filter { rTreeResult.contains(it) }
+
+    printStyledPrompt(
+        color = CLIColors.KOTLIN_PURPLE_BOLD,
+        prompt = "\nR-Tree found ${rTreeResult.size} point(s): $rTreeResult",
+        background = CLIColors.BG_WHITE,
+    )
+    printStyledPrompt(
+        color = CLIColors.KOTLIN_PURPLE_BOLD,
+        prompt = "Linear scan found ${linearResults.size} point(s): $linearResults",
+        background = CLIColors.BG_WHITE,
+    )
 }

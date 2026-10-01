@@ -23,4 +23,5 @@ dependencies {
     testImplementation(kotlin("test"))
 
     implementation(project(":core"))
+    implementation(project(":cli-common"))
 }
