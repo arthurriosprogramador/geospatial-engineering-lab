@@ -108,8 +108,11 @@ private fun calculateSegmentLengthAndPointOrientation() {
         else -> "Collinear"
     }
 
+    val isPointOnSegment = segment.isPointOnSegment(point)
+    val isPointOnSegmentLabel = if (isPointOnSegment) "The point is on the segment." else "The point is not on the segment."
+
     println(
-        "\nThe segment length is $segmentLength and the cross product is $crossProduct, which means ${orientationLabel}\n"
+        "\nThe segment length is $segmentLength and the cross product is $crossProduct, which means ${orientationLabel}. $isPointOnSegmentLabel\n"
     )
 }
 

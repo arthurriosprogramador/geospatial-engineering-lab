@@ -1,5 +1,7 @@
 package model
 
+import kotlin.math.abs
+
 data class Segment2D(
     val start: Point2D,
     val end: Point2D
@@ -29,5 +31,26 @@ data class Segment2D(
     fun orientationOf(point: Point2D): Double {
         val toPoint = point - start
         return direction cross toPoint
+    }
+
+    /**
+     * Determines if the point is on the segment.
+     */
+    fun isPointOnSegment(point: Point2D, tolerance: Double = 1e-6): Boolean {
+        val segmentLength = length()
+
+        if (segmentLength == 0.0) {
+            return start.distanceTo(point) <= tolerance
+        }
+
+        val distanceToLine = abs(orientationOf(point)) / segmentLength
+
+        val withinX = point.x >= minOf(start.x, end.x) - tolerance
+                && point.x <= maxOf(start.x, end.x) + tolerance
+
+        val withinY = point.y >= minOf(start.y, end.y) - tolerance
+                && point.y <= maxOf(start.y, end.y) + tolerance
+
+        return distanceToLine <= tolerance && withinX && withinY
     }
 }
