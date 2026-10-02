@@ -4,7 +4,6 @@ import formatter.formatNumber
 import model.LinearRing2D
 import model.Polygon2D
 import spatial.contains
-import utils.*
 
 private const val pointsPrompt = "Please type the point coordinates separated by space and use comma to " +
         "separate points (E.g.: 0 0, 3 4): "

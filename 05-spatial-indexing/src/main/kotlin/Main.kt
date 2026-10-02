@@ -61,10 +61,22 @@ private fun handleManualPoints() {
         val pointList: List<Point2D> = readPointList(pointsPrompt, pointQuantity > 1, pointQuantity)
 
         println("\nNow you must define the bounding box to query the R-Tree:")
+
+        val maxXPrompt = "Max X: "
+        val maxYPrompt = "Max Y: "
+
         val minX = readDouble("Min X: ")
-        val maxX = readDouble("Max X: ")
+        var maxX = readDouble(maxXPrompt)
+        if (maxX < minX) {
+            println("The maximum X could not be less than the minimum X.")
+            maxX = readDouble(maxXPrompt)
+        }
         val minY = readDouble("Min Y: ")
-        val maxY = readDouble("Max Y: ")
+        var maxY = readDouble(maxYPrompt)
+        if (maxX < minX) {
+            println("The maximum Y could not be less than the minimum Y.")
+            maxY = readDouble(maxYPrompt)
+        }
 
         val queryBox = BoundingBox2D(minX, minY, maxX, maxY)
 
@@ -109,6 +121,7 @@ private fun getResult(boundingBox: BoundingBox2D, pointList: List<Point2D>) {
 
     val rTreeResult = rTree2D.search(boundingBox)
     val linearResults = pointList.filter { rTreeResult.contains(it) }
+    val missedPoints = pointList.filter { !rTreeResult.contains(it) }
 
     printStyledPrompt(
         color = CLIColors.KOTLIN_PURPLE_BOLD,
@@ -118,6 +131,11 @@ private fun getResult(boundingBox: BoundingBox2D, pointList: List<Point2D>) {
     printStyledPrompt(
         color = CLIColors.KOTLIN_PURPLE_BOLD,
         prompt = "Linear scan found ${linearResults.size} point(s): $linearResults",
+        background = CLIColors.BG_WHITE,
+    )
+    printStyledPrompt(
+        color = CLIColors.KOTLIN_PURPLE_BOLD,
+        prompt = "There were ${missedPoints.size} missed point(s): $missedPoints",
         background = CLIColors.BG_WHITE,
     )
 }
