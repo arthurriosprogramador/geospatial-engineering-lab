@@ -13,5 +13,9 @@ data class Coordinates(
         require(longitude in -180.0..180.0) {
             "Longitude must be between -180 and 180"
         }
+
+        require(altitude.isFinite()) {
+            "Altitude must be a finite number"
+        }
     }
 }

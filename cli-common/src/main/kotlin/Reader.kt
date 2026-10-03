@@ -22,8 +22,9 @@ fun readDouble(prompt: String): Double {
 fun readInt(prompt: String): Int {
     while (true) {
         printSameLinePrompt(prompt)
-        val input = readlnOrNull()?.trim()
-        val value = input?.toIntOrNull()
+        val inputString = readlnOrNull() ?: throw EOFException("Input ended.")
+        val input = inputString.trim()
+        val value = input.toIntOrNull()
         prompt.printDividerByPrompt()
 
         if (value != null) {
@@ -35,26 +36,23 @@ fun readInt(prompt: String): Int {
 }
 
 fun readString(prompt: String): String {
-    while (true) {
         printSameLinePrompt(prompt)
-        val input = readlnOrNull()?.trim()
+        val input = readlnOrNull() ?: throw EOFException("Input ended.")
         prompt.printDividerByPrompt()
 
-        if (input != null) {
-            return input
-        }
-    }
+        return input.trim()
 }
 
 fun readBoolean(prompt: String): Boolean {
     while (true) {
         print(prompt)
-        val input = readlnOrNull()?.trim()
+        val inputString = readlnOrNull() ?: throw EOFException("Input ended.")
+        val input = inputString.trim()
 
-        val inputFalse = input?.lowercase() == "n"
-        val inputTrue = input?.lowercase() == "y"
+        val inputFalse = input.lowercase() == "n"
+        val inputTrue = input.lowercase() == "y"
 
-        if (input != null && !inputFalse && !inputTrue) {
+        if (!inputFalse && !inputTrue) {
             println("Invalid value. Just type 'y' or 'n'")
         } else {
             return !inputFalse
@@ -68,15 +66,11 @@ fun readPointList(
     minPoints: Int = 2): List<Point2D> {
     while (true) {
         print(prompt)
-        val input = readlnOrNull()?.trim()
-        val values = input?.split(',')?.map { it.trim() }?.filter { it.isNotEmpty() }
+        val inputString = readlnOrNull() ?: throw EOFException("Input ended.")
+        val input = inputString.trim()
+        val values = input.split(',').map { it.trim() }.filter { it.isNotEmpty() }
 
-        if (values.isNullOrEmpty()) {
-            println("Invalid value. Try again.")
-            continue
-        }
-
-        if (isMoreThanOne && values.size == 1) {
+        if (isMoreThanOne && values.size < minPoints) {
             println("Please provide at least $minPoints points.")
             continue
         }
@@ -92,15 +86,11 @@ fun readPointList(
 fun readSegment(prompt: String): Segment2D {
     while (true) {
         print(prompt)
-        val input = readlnOrNull()?.trim()
-        val values = input?.split(',')?.map { it.trim() }?.filter { it.isNotEmpty() }
+        val inputString = readlnOrNull() ?: throw EOFException("Input ended.")
+        val input = inputString.trim()
+        val values = input.split(',').map { it.trim() }.filter { it.isNotEmpty() }
 
-        if (values.isNullOrEmpty()) {
-            println("Invalid value. Try again.")
-            continue
-        }
-
-        if (values.size < 2) {
+        if (values.size != 2) {
             println("Please provide two points for the segment, the start point and the end point.")
             continue
         }
@@ -116,13 +106,9 @@ fun readSegment(prompt: String): Segment2D {
 fun readLinearRing(prompt: String): LinearRing2D {
     while (true) {
         print(prompt)
-        val input = readlnOrNull()?.trim()
-        val values = input?.split(',')?.map { it.trim() }?.filter { it.isNotEmpty() }
-
-        if (values.isNullOrEmpty()) {
-            println("Invalid value. Try again.")
-            continue
-        }
+        val inputString = readlnOrNull() ?: throw EOFException("Input ended.")
+        val input = inputString.trim()
+        val values = input.split(',').map { it.trim() }.filter { it.isNotEmpty() }
 
         if (values.size < 3) {
             println("Please provide at least 3 points to make a linear ring.")
@@ -138,12 +124,12 @@ fun readLinearRing(prompt: String): LinearRing2D {
 
 private fun parsePoints(rawList: List<String>): List<Point2D> {
     val pointList = mutableListOf<Point2D>()
-    rawList.forEach { rawList ->
-        val coords = rawList.split(" ")
+    rawList.forEach { rawPoint ->
+        val coords = rawPoint.trim().split(Regex("\\s+"))
         if (coords.size == 2) {
             val x = coords[0].toDoubleOrNull()
             val y = coords[1].toDoubleOrNull()
-            if (x != null && y != null) pointList.add(Point2D(x, y))
+            if (x != null && y != null && x.isFinite() && y.isFinite()) pointList.add(Point2D(x, y))
         }
     }
 

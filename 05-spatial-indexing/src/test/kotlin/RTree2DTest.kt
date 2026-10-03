@@ -74,30 +74,32 @@ class RTree2DTest {
             )
         }
 
-        val x1 = random.nextDouble(-100.0, 100.0)
-        val x2 = random.nextDouble(-100.0, 100.0)
+        repeat(10) {
+            val x1 = random.nextDouble(-100.0, 100.0)
+            val x2 = random.nextDouble(-100.0, 100.0)
 
-        val y1 = random.nextDouble(-100.0, 100.0)
-        val y2 = random.nextDouble(-100.0, 100.0)
+            val y1 = random.nextDouble(-100.0, 100.0)
+            val y2 = random.nextDouble(-100.0, 100.0)
 
-        val boundingBox = BoundingBox2D(
-            minX = minOf(x1, x2),
-            maxX = maxOf(x1, x2),
-            minY = minOf(y1, y2),
-            maxY = maxOf(y1, y2)
-        )
+            val boundingBox = BoundingBox2D(
+                minX = minOf(x1, x2),
+                maxX = maxOf(x1, x2),
+                minY = minOf(y1, y2),
+                maxY = maxOf(y1, y2)
+            )
 
-        val rTree = RTree2D<Point2D>()
-        points.forEach {
-            rTree.insert(it, it)
+            val rTree = RTree2D<Point2D>()
+            points.forEach {
+                rTree.insert(it, it)
+            }
+
+            val expected = points.filter { boundingBox.contains(it) }
+            val actual = rTree.search(boundingBox)
+
+            assertEquals(
+                expected.groupingBy { it }.eachCount(),
+                actual.groupingBy { it }.eachCount()
+            )
         }
-
-        val expected = points.filter { boundingBox.contains(it) }
-        val actual = rTree.search(boundingBox)
-
-        assertEquals(
-            expected.groupingBy { it }.eachCount(),
-            actual.groupingBy { it }.eachCount()
-        )
     }
 }
