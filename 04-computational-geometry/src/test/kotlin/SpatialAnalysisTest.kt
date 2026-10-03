@@ -69,4 +69,16 @@ class SpatialAnalysisTest {
 
         assertFalse(polygonWithHole.contains(holePoint))
     }
+
+    @Test
+    fun `polygon with hole should reject point on hole vertex`() {
+        val boundaryPoint = Point2D(3.0, 3.0)
+        assertFalse(polygonWithHole.contains(boundaryPoint))
+    }
+
+    @Test
+    fun `polygon with hole should reject point on hole edge`() {
+        val boundaryPoint = Point2D(3.0, 5.0)
+        assertFalse(polygonWithHole.contains(boundaryPoint))
+    }
 }

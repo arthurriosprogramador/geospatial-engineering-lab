@@ -55,7 +55,7 @@ fun LinearRing2D.contains(point: Point2D) : Boolean {
  *
  * 1. It is inside the exterior ring.
  *
- * 2. It is **NOT** inside any of the interior rings (holes).
+ * 2. It is **NOT** inside any of the interior rings (holes) or boundary points.
  */
 fun Polygon2D.contains(point: Point2D) : Boolean {
     return exteriorRing.contains(point) && interiorRings.none { hole ->
