@@ -62,8 +62,8 @@ private fun printOptions(options: List<String>) {
 
 private fun selectOption(options: List<String>): Int {
     while (true) {
-        val input = readlnOrNull()?.trim()
-        val option = input?.toIntOrNull()
+        val input = readlnOrNull() ?: throw EOFException("Input ended.")
+        val option = input.trim().toIntOrNull()
 
         if (option != null && option in 1..options.size) {
             return option

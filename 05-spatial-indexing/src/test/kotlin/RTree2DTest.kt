@@ -74,6 +74,11 @@ class RTree2DTest {
             )
         }
 
+        val rTree = RTree2D<Point2D>()
+        points.forEach {
+            rTree.insert(it, it)
+        }
+
         repeat(10) {
             val x1 = random.nextDouble(-100.0, 100.0)
             val x2 = random.nextDouble(-100.0, 100.0)
@@ -87,11 +92,6 @@ class RTree2DTest {
                 minY = minOf(y1, y2),
                 maxY = maxOf(y1, y2)
             )
-
-            val rTree = RTree2D<Point2D>()
-            points.forEach {
-                rTree.insert(it, it)
-            }
 
             val expected = points.filter { boundingBox.contains(it) }
             val actual = rTree.search(boundingBox)

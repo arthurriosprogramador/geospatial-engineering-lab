@@ -18,6 +18,12 @@ data class RTreeEntry<T>(
  */
 class RTree2D<T>(private val maxEntries: Int = 16) {
 
+    init {
+        require(maxEntries >= 2) {
+            "Maximum entries should be more than 1."
+        }
+    }
+
     private var root: Node<T> = LeafNode(maxEntries)
 
     fun insert(entry: RTreeEntry<T>) {

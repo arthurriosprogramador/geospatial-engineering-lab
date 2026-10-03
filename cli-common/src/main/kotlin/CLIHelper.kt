@@ -1,6 +1,7 @@
 import org.jline.terminal.Terminal
 import org.jline.terminal.TerminalBuilder
 import org.jline.utils.NonBlockingReader
+import java.io.EOFException
 import java.io.PrintWriter
 
 fun PrintWriter.hideCursor(): PrintWriter = apply {
@@ -54,7 +55,7 @@ enum class MenuAction {
 
 private fun readMenuAction(reader: NonBlockingReader) : MenuAction {
     val firstChar = reader.read()
-    if (firstChar == -1) return MenuAction.IGNORE
+    if (firstChar == -1) throw EOFException("Input ended.")
 
     if (firstChar == 10 || firstChar == 13) return MenuAction.SELECT
 
@@ -144,8 +145,8 @@ fun createFallbackMenu(options: List<String>, title: String): Int {
 
         print("\nPlease select an option by typing its number and pressing Enter: ")
 
-        val input = readlnOrNull()?.trim()
-        val option = input?.toIntOrNull()
+        val input = readlnOrNull() ?: throw EOFException("Input ended.")
+        val option = input.trim().toIntOrNull()
 
         if (option != null && option in 1..options.size) return option
 
