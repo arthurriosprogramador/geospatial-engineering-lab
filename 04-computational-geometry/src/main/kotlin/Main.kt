@@ -4,6 +4,7 @@ import formatter.formatNumber
 import model.LinearRing2D
 import model.Polygon2D
 import spatial.contains
+import java.io.EOFException
 
 private const val pointsPrompt = "Please type the point coordinates separated by space and use comma to " +
         "separate points (E.g.: 0 0, 3 4): "
@@ -21,7 +22,11 @@ private const val holePrompt =
             "separated by space and use comma to separate points (E.g.: 0 0, 3 4): "
 
 fun main() {
-    startProgram()
+    try {
+        startProgram()
+    } catch (_: EOFException) {
+        println("\nInput ended. Goodbye!")
+    }
 }
 
 private fun startProgram() {

@@ -1,13 +1,18 @@
 import model.BoundingBox2D
 import model.Point2D
 import model.RTree2D
+import java.io.EOFException
 import kotlin.random.Random
 
 private const val pointsPrompt = "Please type the point coordinates separated by space and use comma to " +
         "separate points (E.g.: 0 0, 3 4):"
 
 fun main() {
-    startProgram()
+    try {
+        startProgram()
+    } catch (_: EOFException) {
+        println("\nInput ended. Goodbye!")
+    }
 }
 
 private fun startProgram() {
@@ -129,7 +134,7 @@ private fun getResult(boundingBox: BoundingBox2D, pointList: List<Point2D>) {
 
     val rTreeResult = rTree2D.search(boundingBox)
     val linearResults = pointList.filter { boundingBox.contains(it) }
-    val missedPoints = pointList.filter { !rTreeResult.contains(it) }
+    val missedPoints = linearResults.filter { !rTreeResult.contains(it) }
 
     printStyledPrompt(
         color = CLIColors.KOTLIN_PURPLE_BOLD,

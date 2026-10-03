@@ -1,15 +1,17 @@
 import model.LinearRing2D
 import model.Point2D
 import model.Segment2D
+import java.io.EOFException
 
 fun readDouble(prompt: String): Double {
     while (true) {
         printSameLinePrompt(prompt)
-        val input = readlnOrNull()?.trim()?.replace(',', '.')
-        val value = input?.toDoubleOrNull()
+        val stringInput = readlnOrNull() ?: throw EOFException("Input ended.")
+        val input = stringInput.trim().replace(',', '.')
+        val value = input.toDoubleOrNull()
         prompt.printDividerByPrompt()
 
-        if (value != null) {
+        if (value != null && value.isFinite()) {
             return value
         }
 

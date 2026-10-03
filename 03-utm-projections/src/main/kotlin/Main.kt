@@ -4,9 +4,14 @@ import geodesy.toUTM
 import model.Coordinates
 import model.Hemisphere
 import model.UTMCoordinates
+import java.io.EOFException
 
 fun main() {
-    startProgram()
+    try {
+        startProgram()
+    } catch (_: EOFException) {
+        println("\nInput ended. Goodbye!")
+    }
 }
 
 private fun startProgram() {

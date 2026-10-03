@@ -3,6 +3,7 @@ import geodesy.toECEF
 import geodesy.toENU
 import model.Coordinates
 import model.ENU
+import java.io.EOFException
 
 fun main() {
     val options = listOf(
@@ -11,7 +12,11 @@ fun main() {
         "Exit"
     )
 
-    startProgram(options)
+    try {
+        startProgram(options)
+    } catch (_: EOFException) {
+        println("\nInput ended. Goodbye!")
+    }
 }
 
 private fun startProgram(options: List<String>) {

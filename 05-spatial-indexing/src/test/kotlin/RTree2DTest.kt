@@ -2,6 +2,7 @@ import model.BoundingBox2D
 import model.Point2D
 import model.RTree2D
 import org.junit.jupiter.api.Test
+import kotlin.random.Random
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -60,5 +61,43 @@ class RTree2DTest {
         for (expectedId in 5..10) {
             assertTrue(results.contains(expectedId), "Expected point $expectedId was not found")
         }
+    }
+
+    @Test
+    fun `Should return the matches`() {
+        val random = Random(42)
+
+        val points = List(100) {
+            Point2D(
+                random.nextDouble(-100.0, 100.0),
+                random.nextDouble(-100.0, 100.0)
+            )
+        }
+
+        val x1 = random.nextDouble(-100.0, 100.0)
+        val x2 = random.nextDouble(-100.0, 100.0)
+
+        val y1 = random.nextDouble(-100.0, 100.0)
+        val y2 = random.nextDouble(-100.0, 100.0)
+
+        val boundingBox = BoundingBox2D(
+            minX = minOf(x1, x2),
+            maxX = maxOf(x1, x2),
+            minY = minOf(y1, y2),
+            maxY = maxOf(y1, y2)
+        )
+
+        val rTree = RTree2D<Point2D>()
+        points.forEach {
+            rTree.insert(it, it)
+        }
+
+        val expected = points.filter { boundingBox.contains(it) }
+        val actual = rTree.search(boundingBox)
+
+        assertEquals(
+            expected.groupingBy { it }.eachCount(),
+            actual.groupingBy { it }.eachCount()
+        )
     }
 }
