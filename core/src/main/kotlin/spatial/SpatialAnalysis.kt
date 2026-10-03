@@ -35,6 +35,8 @@ fun Segment2D.intersectsHorizontalRay(point: Point2D) : Boolean {
 fun LinearRing2D.contains(point: Point2D) : Boolean {
     if (!boundingBox.contains(point)) return false
 
+    if (segments.any { it.isPointOnSegment(point) }) return false
+
     var intersections = 0
     for (segment in segments) {
         if (segment.intersectsHorizontalRay(point)) {
@@ -56,5 +58,10 @@ fun LinearRing2D.contains(point: Point2D) : Boolean {
  * 2. It is **NOT** inside any of the interior rings (holes).
  */
 fun Polygon2D.contains(point: Point2D) : Boolean {
-    return exteriorRing.contains(point) && interiorRings.none { hole -> hole.contains(point) }
+    return exteriorRing.contains(point) && interiorRings.none { hole ->
+        val insideHole = hole.contains(point)
+        val onHoleBoundary = hole.segments.any { it.isPointOnSegment(point) }
+
+        insideHole || onHoleBoundary
+    }
 }

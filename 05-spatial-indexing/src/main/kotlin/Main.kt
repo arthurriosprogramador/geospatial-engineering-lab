@@ -67,13 +67,13 @@ private fun handleManualPoints() {
 
         val minX = readDouble("Min X: ")
         var maxX = readDouble(maxXPrompt)
-        if (maxX < minX) {
+        while (maxX < minX) {
             println("The maximum X could not be less than the minimum X.")
             maxX = readDouble(maxXPrompt)
         }
         val minY = readDouble("Min Y: ")
         var maxY = readDouble(maxYPrompt)
-        if (maxX < minX) {
+        while (maxY < minY) {
             println("The maximum Y could not be less than the minimum Y.")
             maxY = readDouble(maxYPrompt)
         }
@@ -102,10 +102,18 @@ private fun handleRandomDataset() {
         pointList.add(point)
     }
 
-    val minX = Random.nextDouble(minCoord, maxCoord)
-    val maxX = minX + Random.nextDouble(minCoord, maxCoord)
-    val minY = Random.nextDouble(minCoord, maxCoord)
-    val maxY = minY + Random.nextDouble(minCoord, maxCoord)
+    val xValues = mutableListOf<Double>()
+    val yValues = mutableListOf<Double>()
+
+    repeat(2) {
+        xValues.add(Random.nextDouble(minCoord, maxCoord))
+        yValues.add(Random.nextDouble(minCoord, maxCoord))
+    }
+
+    val minX = xValues.min()
+    val maxX = xValues.max()
+    val minY = yValues.min()
+    val maxY = yValues.max()
 
     val boundingBox = BoundingBox2D(minX, minY, maxX, maxY)
     getResult(boundingBox, pointList)
@@ -120,7 +128,7 @@ private fun getResult(boundingBox: BoundingBox2D, pointList: List<Point2D>) {
     }
 
     val rTreeResult = rTree2D.search(boundingBox)
-    val linearResults = pointList.filter { rTreeResult.contains(it) }
+    val linearResults = pointList.filter { boundingBox.contains(it) }
     val missedPoints = pointList.filter { !rTreeResult.contains(it) }
 
     printStyledPrompt(
