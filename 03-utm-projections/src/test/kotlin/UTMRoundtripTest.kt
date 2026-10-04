@@ -127,4 +127,31 @@ class UTMRoundtripTest {
             actual = coordinates.altitude
         )
     }
+
+    @Test
+    fun `Should convert Coordinates to UTM correctly`() {
+        data class ReferenceCase(
+            val name: String,
+            val latitude: Double,
+            val longitude: Double,
+            val easting: Double,
+            val northing: Double,
+            val zone: String
+        )
+
+        val locations = listOf(
+            ReferenceCase("São Paulo", -23.5505, -46.6333, 333_287.915, 7_394_588.319, "23S"),
+            ReferenceCase("New York", 40.7128, -74.0060, 583_959.372, 4_507_350.998, "18N"),
+            ReferenceCase("Sydney", -33.8688, 151.2093, 334_368.634, 6_250_948.345, "56S"),
+            ReferenceCase("Equator", 0.0, 0.0, 166_021.443, 0.0, "31N")
+        )
+
+        for (location in locations) {
+            val utm = Coordinates(location.latitude, location.longitude, altitude = 0.0).toUTM()
+
+            assertEquals(location.easting, utm.easting, 0.5, "${location.name} easting")
+            assertEquals(location.northing, utm.northing, 0.5, "${location.name} northing")
+            assertEquals(location.zone, utm.getFormattedZone(), "${location.name} UTM zone")
+        }
+    }
 }

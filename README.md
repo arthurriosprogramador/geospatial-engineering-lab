@@ -16,7 +16,8 @@ geospatial-engineering-lab/
 ├── 01-math-and-geodesy/              # Ellipsoidal geometry, ECEF, and geodetic transformations
 ├── 02-local-frames-enu/              # Local tangent plane (East, North, Up) transformations
 ├── 03-utm-projections/               # Transverse Mercator and UTM grid projections
-└── 04-computational-geometry/        # Computational geometry with 2D forms
+├── 04-computational-geometry/        # Computational geometry with 2D forms
+└── 05-spatial-indexing/              # R-tree search and repeatable benchmark
 ```
 
 ## Modules
@@ -24,9 +25,9 @@ geospatial-engineering-lab/
 ### `01-math-and-geodesy`
 * **WGS84 Datum Model:** Ellipsoidal constants including semi-major axis ($a$), flattening ($f$), and eccentricity squared ($e^2$).
 * **Direct Transformation:** Geodetic coordinates $(\phi, \lambda, h) \to \text{ECEF } (X, Y, Z)$.
-* **Inverse Transformation:** ECEF $\to$ Geodetic conversion using Bowring's closed-form algorithm.
+* **Inverse Transformation:** ECEF $\to$ Geodetic conversion using Bowring's closed-form algorithm. Altitude uses the horizontal component away from the poles and the vertical component near the poles to avoid division by a very small cosine.
 * **Interactive CLI:** Terminal loop with sanitized numerical input handling regional decimal formatting.
-* **Automated Tests:** Comprehensive unit test suite using `kotlin.test` verifying sub-millimeter roundtrip accuracy and prime vertical radius calculations.
+* **Automated Tests:** `kotlin.test` checks for a geodetic/ECEF roundtrip, prime vertical radius, and altitude at points 1 cm off both poles.
   
 ### `02-local-frames-enu`
 * **Local Tangent Plane Model:** `ENU` data class representing metric offsets (East, North, Up) relative to a local reference point.
@@ -40,7 +41,7 @@ geospatial-engineering-lab/
 * **Direct Transformation:** Geodetic coordinates $(\phi, \lambda) \to \text{UTM } (E, N)$ using Redfearn's transverse ellipsoidal series expansion up to 6th order.
 * **Inverse Transformation:** UTM $\to$ Geodetic coordinates applying the footprint latitude ($\phi_1$) derived from rectifying sphere geometry and inverse Taylor corrections.
 * **Interactive CLI:** Terminal application allowing seamless forward/inverse UTM conversion with coordinate validation and hemisphere handling.
-* **Automated Tests:** Comprehensive unit test suite validating numerical roundtrip consistency across equatorial and mid-latitude boundaries.
+* **Automated Tests:** Roundtrip and fixed WGS84 reference checks for UTM locations in both hemispheres.
 
 ### `04-computational-geometry`
 * **2D Planar Models:** `Point2D`, `Vector2D`, `Segment2D`, `LinearRing2D`, `Polygon2D`, and `BoundingBox2D` representing planar primitives and topological boundaries.
@@ -49,7 +50,12 @@ geospatial-engineering-lab/
 * **Ring/Polygon Area (Shoelace & Winding Order):** Implements Green's theorem (Shoelace formula) to compute signed areas, detect vertex winding orders, and calculate net polygon area supporting multiple interior rings (holes).
 * **Point-in-Polygon Containment (Ray Casting):** Validates point containment across complex topologies with interior holes using ray casting, half-open vertical interval rules, and $O(1)$ bounding box pre-filtering.
 * **Automated Tests:** Comprehensive unit test suite validating spatial containment, vertex edge cases, and net area calculations.
-  
+
+### `05-spatial-indexing`
+* **R-tree Index:** Inserts 2D points and searches for entries intersecting a bounding box.
+* **Interactive CLI:** Supports manual points and a random-data benchmark.
+* **Repeatable Benchmark:** Uses fixed seeds for 100,000 points and 100 query boxes, checks results against a linear scan, warms up both methods, and reports median search and construction times.
+
 ## Tech Stack
 
 * **Language:** Kotlin (JVM 17+)
@@ -71,4 +77,17 @@ Launch the terminal converter application:
 ./gradlew :02-local-frames-enu:run --console=plain
 ./gradlew :03-utm-projections:run --console=plain
 ./gradlew :04-computational-geometry:run --console=plain
+./gradlew :05-spatial-indexing:run --console=plain
 ```
+
+### Run the Spatial Index Benchmark
+
+The benchmark uses 100,000 fixed points and 100 fixed query boxes. It checks each
+R-tree result against a linear scan, warms up both searches, and reports median
+durations from repeated batches. Point and query seeds are printed with the results.
+
+```bash
+./gradlew :05-spatial-indexing:run --args=--random --console=plain
+```
+
+`--benchmark` is also accepted. Both options run the same repeatable random-data benchmark.

@@ -43,7 +43,11 @@ fun ECEF.toCoordinates() : Coordinates {
 
     val n = lat.primeVerticalRadius()
 
-    val alt = (horizontalDistance / cos(lat)) - n
+    val alt = if (abs(cos(lat)) >= abs(sin(lat))) {
+        horizontalDistance / cos(lat) - n
+    } else {
+        this.z / sin(lat) - n * (1.0 - WGS84.E2)
+    }
 
     val latDegrees = Math.toDegrees(lat)
     val longDegrees = Math.toDegrees(long)

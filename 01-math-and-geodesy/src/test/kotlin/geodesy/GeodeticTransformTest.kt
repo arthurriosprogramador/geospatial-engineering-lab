@@ -2,6 +2,7 @@ package geodesy
 
 import datum.WGS84
 import model.Coordinates
+import model.ECEF
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import kotlin.math.pow
@@ -32,6 +33,18 @@ class GeodeticTransformTest {
         assertEquals(original.latitude, recovered.latitude, degreeTolerance, "Error on Latitude")
         assertEquals(original.longitude, recovered.longitude, degreeTolerance, "Error on Longitude")
         assertEquals(original.altitude, recovered.altitude, meterTolerance, "Error on Altitude")
+    }
+
+    @Test
+    fun `should recover altitude close to both poles with nonzero horizontal distance`() {
+        for (sign in listOf(1.0, -1.0)) {
+            val ecef = ECEF(x = 0.01, y = 0.0, z = sign * (WGS84.B + 100.0))
+            val recovered = ecef.toCoordinates()
+
+            assertEquals(sign * 90.0, recovered.latitude, 1e-6, "Near-pole latitude")
+            assertEquals(0.0, recovered.longitude, 1e-9, "Near-pole longitude")
+            assertEquals(100.0, recovered.altitude, 0.005, "Near-pole altitude")
+        }
     }
 
     @Test

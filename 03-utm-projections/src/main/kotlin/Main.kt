@@ -89,7 +89,8 @@ private fun calculateUTMToCoordinate() {
         hemisphereInput = readString("\nType N to North or S to South (N/S): ")
 
         if (hemisphereInput.lowercase() == "n" || hemisphereInput.lowercase() == "s") break
-        else hemisphereInput = readString("Invalid input. Please type N to North or S to South (N/S): ")
+
+        println("Invalid input. Please type N or S.")
     }
     val hemisphere = Hemisphere.isNorthOrSouth(hemisphereInput)
     val utm = UTMCoordinates(easting, northing, zone, hemisphere)
