@@ -23,7 +23,7 @@ tasks.test {
 dependencies {
     testImplementation(kotlin("test"))
 
-    implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.8")
+    implementation(libs.kotlinx.immutable)
 
     implementation(project(":core"))
     implementation(project(":cli-common"))

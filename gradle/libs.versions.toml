@@ -1,0 +1,5 @@
+[versions]
+immutable = "0.3.8"
+
+[libraries]
+kotlinx-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "immutable" }
