@@ -1,3 +1,4 @@
+import kotlinx.collections.immutable.persistentListOf
 import model.LinearRing2D
 import model.Point2D
 import model.Polygon2D
@@ -8,7 +9,7 @@ import kotlin.test.assertTrue
 
 class SpatialAnalysisTest {
     private val exterior = LinearRing2D(
-        listOf(
+        persistentListOf(
             Point2D(0.0, 0.0),
             Point2D(10.0, 0.0),
             Point2D(10.0, 10.0),
@@ -17,7 +18,7 @@ class SpatialAnalysisTest {
     )
 
     private val hole = LinearRing2D(
-        listOf(
+        persistentListOf(
             Point2D(3.0, 3.0),
             Point2D(7.0, 3.0),
             Point2D(7.0, 7.0),

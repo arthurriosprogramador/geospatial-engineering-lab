@@ -1,6 +1,7 @@
 import area.area
 import area.isCounterClockwise
 import area.signedArea
+import kotlinx.collections.immutable.persistentListOf
 import model.LinearRing2D
 import model.Point2D
 import model.Polygon2D
@@ -15,7 +16,7 @@ class AreaAnalysisTest {
     @Test
     fun `should calculate area of a simple square correctly`() {
         val squareRing = LinearRing2D(
-            listOf(
+            persistentListOf(
                 Point2D(0.0, 0.0),
                 Point2D(10.0, 0.0),
                 Point2D(10.0, 10.0),
@@ -31,7 +32,7 @@ class AreaAnalysisTest {
     @Test
     fun `should detect clockwise winding order as negative signed area`() {
         val cwSquare = LinearRing2D(
-            listOf(
+            persistentListOf(
                 Point2D(0.0, 0.0),
                 Point2D(0.0, 10.0),
                 Point2D(10.0, 10.0),
@@ -47,7 +48,7 @@ class AreaAnalysisTest {
     @Test
     fun `should subtract holes area from polygon net area`() {
         val exterior = LinearRing2D(
-            listOf(
+            persistentListOf(
                 Point2D(0.0, 0.0),
                 Point2D(20.0, 0.0),
                 Point2D(20.0, 20.0),
@@ -56,7 +57,7 @@ class AreaAnalysisTest {
         )
 
         val hole = LinearRing2D(
-            listOf(
+            persistentListOf(
                 Point2D(5.0, 5.0),
                 Point2D(9.0, 5.0),
                 Point2D(9.0, 9.0),

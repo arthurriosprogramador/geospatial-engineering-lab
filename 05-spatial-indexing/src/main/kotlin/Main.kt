@@ -134,10 +134,6 @@ private fun getResult(boundingBox: BoundingBox2D, pointList: List<Point2D>) {
     }
     val rTree2D = timedBuild.value
 
-    pointList.forEach {
-        rTree2D.insert(it, it)
-    }
-
     val timedSearch = measureTimedValue {
         rTree2D.search(boundingBox)
     }
