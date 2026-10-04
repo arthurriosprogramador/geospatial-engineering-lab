@@ -43,8 +43,8 @@ private fun selectOption(options: List<String>) : Int {
 
         print("Type the desired option (1-${options.size}): ")
 
-        val input = readlnOrNull()?.trim()
-        val choice = input?.toIntOrNull()
+        val input = readlnOrNull() ?: throw EOFException("Input ended.")
+        val choice = input.trim().toIntOrNull()
 
         if (choice != null && choice in 1..options.size) {
             return choice

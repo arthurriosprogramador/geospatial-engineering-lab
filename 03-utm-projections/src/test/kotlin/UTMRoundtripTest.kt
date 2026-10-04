@@ -1,6 +1,8 @@
+import datum.WGS84
 import geodesy.toCoordinates
 import geodesy.toUTM
 import model.Coordinates
+import model.ECEF
 import model.Hemisphere
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -52,5 +54,77 @@ class UTMRoundtripTest {
         assertEquals(0.0, utm.northing, meterTolerance)
         assertEquals(31, utm.zone)
         assertEquals(Hemisphere.NORTH, utm.hemisphere)
+    }
+
+    @Test
+    fun `should convert north pole ECEF to geodetic coordinates`() {
+        val ecef = ECEF(
+            x = 0.0,
+            y = 0.0,
+            z = WGS84.B
+        )
+
+        val coordinates = ecef.toCoordinates()
+
+        println("ECEF: x=${ecef.x}, y=${ecef.y}, z=${ecef.z}")
+        println("Latitude: radians=${Math.toRadians(coordinates.latitude)}, degrees=${coordinates.latitude}")
+        println("Altitude: ${coordinates.altitude}")
+
+        assertEquals(
+            expected = 90.0,
+            actual = coordinates.latitude
+        )
+        assertEquals(
+            expected = 0.0,
+            actual = coordinates.altitude
+        )
+    }
+
+    @Test
+    fun `should convert north pole at 100m altitude ECEF to geodetic coordinates`() {
+        val ecef = ECEF(
+            x = 0.0,
+            y = 0.0,
+            z = WGS84.B + 100.0
+        )
+
+        val coordinates = ecef.toCoordinates()
+
+        println("ECEF: x=${ecef.x}, y=${ecef.y}, z=${ecef.z}")
+        println("Latitude: radians=${Math.toRadians(coordinates.latitude)}, degrees=${coordinates.latitude}")
+        println("Altitude: ${coordinates.altitude}")
+
+        assertEquals(
+            expected = 90.0,
+            actual = coordinates.latitude
+        )
+        assertEquals(
+            expected = 100.0,
+            actual = coordinates.altitude
+        )
+    }
+
+    @Test
+    fun `should convert south pole at 0m altitude ECEF to geodetic coordinates`() {
+        val ecef = ECEF(
+            x = 0.0,
+            y = 0.0,
+            z = -WGS84.B
+        )
+
+        val coordinates = ecef.toCoordinates()
+
+        println("ECEF: x=${ecef.x}, y=${ecef.y}, z=${ecef.z}")
+        println("Latitude: radians=${Math.toRadians(coordinates.latitude)}, degrees=${coordinates.latitude}")
+        println("Altitude: ${coordinates.altitude}")
+
+        assertEquals(
+            expected = -90.0,
+            actual = coordinates.latitude
+        )
+        assertEquals(
+            expected = 0.0,
+            actual = coordinates.altitude
+        )
     }
 }

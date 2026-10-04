@@ -1,6 +1,7 @@
 import model.BoundingBox2D
 import model.Point2D
 import model.RTree2D
+import model.RTreeEntry
 import org.junit.jupiter.api.Test
 import kotlin.random.Random
 import kotlin.test.assertEquals
@@ -64,7 +65,7 @@ class RTree2DTest {
     }
 
     @Test
-    fun `Should return the matches`() {
+    fun `should match linear scan with duplicates and capacity two`() {
         val random = Random(42)
 
         val points = List(100) {
@@ -72,12 +73,27 @@ class RTree2DTest {
                 random.nextDouble(-100.0, 100.0),
                 random.nextDouble(-100.0, 100.0)
             )
-        }
+        } + List(3) { Point2D(0.0, 0.0) }
 
-        val rTree = RTree2D<Point2D>()
+        val rTree = RTree2D<Point2D>(maxEntries = 2)
         points.forEach {
             rTree.insert(it, it)
         }
+
+        val queryBox = BoundingBox2D(
+            minX = -1.0,
+            minY = -1.0,
+            maxX = 1.0,
+            maxY = 1.0
+        )
+
+        val expected = points.filter { queryBox.contains(it) }
+        val actual = rTree.search(queryBox)
+
+        assertEquals(
+            expected.groupingBy { it }.eachCount(),
+            actual.groupingBy { it }.eachCount()
+        )
 
         repeat(10) {
             val x1 = random.nextDouble(-100.0, 100.0)
@@ -101,5 +117,120 @@ class RTree2DTest {
                 actual.groupingBy { it }.eachCount()
             )
         }
+    }
+
+    @Test
+    fun `should include points on query edges and corners`() {
+        val queryBox = BoundingBox2D(
+            minX = 0.0,
+            minY = 0.0,
+            maxX = 10.0,
+            maxY = 10.0
+        )
+
+        val rTree = RTree2D<Point2D>(maxEntries = 2)
+
+        val pointList = listOf(
+            Point2D(0.0, 5.0),
+            Point2D(10.0, 5.0),
+            Point2D(5.0, 0.0),
+            Point2D(5.0, 10.0),
+            Point2D(0.0, 0.0),
+            Point2D(10.0, 10.0),
+            Point2D(11.0, 5.0)
+        )
+        pointList.forEach {
+            rTree.insert(it, it)
+        }
+
+        val expected = listOf(
+            Point2D(0.0, 5.0),
+            Point2D(10.0, 5.0),
+            Point2D(5.0, 0.0),
+            Point2D(5.0, 10.0),
+            Point2D(0.0, 0.0),
+            Point2D(10.0, 10.0)
+        )
+        val actual = rTree.search(queryBox)
+
+        assertEquals(
+            expected.groupingBy { it }.eachCount(),
+            actual.groupingBy { it }.eachCount()
+        )
+    }
+
+    @Test
+    fun `should return no matches from an empty tree`() {
+        val rTree = RTree2D<Point2D>(maxEntries = 2)
+        val queryBox = BoundingBox2D(
+            minX = 0.0,
+            minY = 0.0,
+            maxX = 10.0,
+            maxY = 10.0
+        )
+
+        val actual = rTree.search(queryBox)
+
+        assertTrue(actual.isEmpty())
+    }
+
+    @Test
+    fun `should find rectangular entries intersecting the query`() {
+        val queryBox = BoundingBox2D(
+            minX = 0.0, minY = 0.0,
+            maxX = 10.0, maxY = 10.0
+        )
+
+        val rTree = RTree2D<String>(maxEntries = 2)
+
+        val entries = listOf(
+            RTreeEntry(
+                boundingBox = BoundingBox2D(
+                    minX = 2.0, minY = 2.0,
+                    maxX = 4.0, maxY = 4.0
+                ),
+                value = "inside"
+            ),
+            RTreeEntry(
+                boundingBox = BoundingBox2D(
+                    minX = 8.0, minY = 8.0,
+                    maxX = 12.0, maxY = 12.0
+                ),
+                value = "overlapping"
+            ),
+            RTreeEntry(
+                boundingBox = BoundingBox2D(
+                    minX = -1.0, minY = -1.0,
+                    maxX = 11.0, maxY = 11.0
+                ),
+                value = "surrounding"
+            ),
+            RTreeEntry(
+                boundingBox = BoundingBox2D(
+                    minX = 10.0, minY = 2.0,
+                    maxX = 12.0, maxY = 4.0
+                ),
+                value = "touching"
+            ),
+            RTreeEntry(
+                boundingBox = BoundingBox2D(
+                    minX = 11.0, minY = 11.0,
+                    maxX = 12.0, maxY = 12.0
+                ),
+                value = "outside"
+            )
+        )
+
+        entries.forEach { rTree.insert(it) }
+
+        val actual = rTree.search(queryBox)
+        val expected = listOf(
+            "inside", "overlapping", "surrounding", "touching"
+        )
+
+        assertEquals(
+            expected.groupingBy { it }.eachCount(),
+            actual.groupingBy { it }.eachCount()
+        )
     }
 }

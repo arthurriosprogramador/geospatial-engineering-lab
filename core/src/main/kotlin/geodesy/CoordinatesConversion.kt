@@ -7,6 +7,7 @@ import model.ENU
 import model.Hemisphere
 import model.UTMCoordinates
 import model.UTMSpatialReference
+import kotlin.math.abs
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.pow
@@ -16,6 +17,22 @@ import kotlin.math.tan
 
 fun ECEF.toCoordinates() : Coordinates {
     val horizontalDistance = sqrt(this.x.pow(2.0) + this.y.pow(2.0))
+
+    if (horizontalDistance == 0.0) {
+        require(z != 0.0) {
+            "Earth's centre has no unique geodetic coordinates."
+        }
+
+        val latitude = if (z > 0.0) 90.0 else -90.0
+        val altitude = abs(z) - WGS84.B
+
+        return Coordinates(
+            latitude = latitude,
+            longitude = 0.0,
+            altitude = altitude
+        )
+    }
+
     val auxiliaryAngle = atan2(this.z * WGS84.A, horizontalDistance * WGS84.B)
 
     val long = atan2(this.y, this.x)
@@ -141,6 +158,11 @@ fun UTMCoordinates.toCoordinates(): Coordinates {
 }
 
 fun Coordinates.toUTM() : UTMCoordinates {
+
+    require(latitude in -80.0..84.0) {
+        "UTM conversion supports latitudes between -80 and 84 degrees."
+    }
+
     val zone = (((this.longitude + 180.0) / 6.0).toInt() + 1).coerceIn(1 ,60)
     val centralMeridian = (zone * 6.0) - 183.0
 

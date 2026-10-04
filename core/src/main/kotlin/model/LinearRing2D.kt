@@ -1,7 +1,9 @@
 package model
 
+import kotlinx.collections.immutable.ImmutableList
+
 data class LinearRing2D(
-    val vertices: List<Point2D>,
+    val vertices: ImmutableList<Point2D>,
 ) {
     init {
         require(vertices.size >= 3){

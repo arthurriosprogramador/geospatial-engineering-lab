@@ -43,8 +43,8 @@ private fun selectOption(options: List<String>) : Int {
         }
 
         print("Type the desired option (1-${options.size}): ")
-        val input = readlnOrNull()?.trim()
-        val choice = input?.toIntOrNull()
+        val input = readlnOrNull() ?: throw EOFException("Input ended.")
+        val choice = input.trim().toIntOrNull()
 
         if (choice != null && choice in 1..options.size) {
             return choice
@@ -79,7 +79,7 @@ private fun calculateUTMToCoordinate() {
     val northing = readDouble("Type Northing (e.g.: 10000000.68): ")
     var zone = readInt("Type Zone (e.g.: 24): ")
 
-    if (zone !in 1..60) {
+    while (zone !in 1..60) {
         println("Invalid Zone! The zone should be between 1 and 60")
         zone = readInt("Type Zone (e.g.: 24): ")
     }

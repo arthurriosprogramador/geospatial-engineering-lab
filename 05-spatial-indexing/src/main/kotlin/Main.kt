@@ -3,6 +3,7 @@ import model.Point2D
 import model.RTree2D
 import java.io.EOFException
 import kotlin.random.Random
+import kotlin.time.measureTimedValue
 
 private const val pointsPrompt = "Please type the point coordinates separated by space and use comma to " +
         "separate points (E.g.: 0 0, 3 4):"
@@ -126,15 +127,31 @@ private fun handleRandomDataset() {
 
 private fun getResult(boundingBox: BoundingBox2D, pointList: List<Point2D>) {
 
-    val rTree2D = RTree2D<Point2D>()
+    val timedBuild = measureTimedValue {
+        val tree = RTree2D<Point2D>()
+        pointList.forEach { tree.insert(it, it) }
+        tree
+    }
+    val rTree2D = timedBuild.value
 
     pointList.forEach {
         rTree2D.insert(it, it)
     }
 
-    val rTreeResult = rTree2D.search(boundingBox)
-    val linearResults = pointList.filter { boundingBox.contains(it) }
-    val missedPoints = linearResults.filter { !rTreeResult.contains(it) }
+    val timedSearch = measureTimedValue {
+        rTree2D.search(boundingBox)
+    }
+    val rTreeResult = timedSearch.value
+
+    val timedScan = measureTimedValue {
+        pointList.filter { boundingBox.contains(it) }
+    }
+    val linearResults = timedScan.value
+
+    val resultsMatch =
+        rTreeResult.groupingBy { it }.eachCount() ==
+                linearResults.groupingBy { it }.eachCount()
+
 
     printStyledPrompt(
         color = CLIColors.KOTLIN_PURPLE_BOLD,
@@ -148,7 +165,22 @@ private fun getResult(boundingBox: BoundingBox2D, pointList: List<Point2D>) {
     )
     printStyledPrompt(
         color = CLIColors.KOTLIN_PURPLE_BOLD,
-        prompt = "There were ${missedPoints.size} missed point(s): $missedPoints",
+        prompt = "Results match: $resultsMatch",
+        background = CLIColors.BG_WHITE,
+    )
+    printStyledPrompt(
+        color = CLIColors.KOTLIN_PURPLE_BOLD,
+        prompt = "R-tree search time: ${timedSearch.duration}",
+        background = CLIColors.BG_WHITE,
+    )
+    printStyledPrompt(
+        color = CLIColors.KOTLIN_PURPLE_BOLD,
+        prompt = "Linear scan time: ${timedScan.duration}",
+        background = CLIColors.BG_WHITE,
+    )
+    printStyledPrompt(
+        color = CLIColors.KOTLIN_PURPLE_BOLD,
+        prompt = "R-tree construction time: ${timedBuild.duration}",
         background = CLIColors.BG_WHITE,
     )
 }

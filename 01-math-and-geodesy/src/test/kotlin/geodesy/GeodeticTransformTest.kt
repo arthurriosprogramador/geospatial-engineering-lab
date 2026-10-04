@@ -38,10 +38,10 @@ class GeodeticTransformTest {
     fun `should return the prime vertical radius`() {
         val degreesLat = -19.747200
         val radianLat = Math.toRadians(degreesLat)
-        val primeVerticalRadius = WGS84.A / (sqrt(1 - WGS84.E2 * sin(radianLat).pow(2.0)))
+        val actual = radianLat.primeVerticalRadius()
 
         val expectedN = 6380575.51
 
-        assertEquals(expectedN, primeVerticalRadius, meterTolerance)
+        assertEquals(expectedN, actual, meterTolerance)
     }
 }
