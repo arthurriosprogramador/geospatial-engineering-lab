@@ -128,6 +128,10 @@ class UTMRoundtripTest {
         )
     }
 
+    /**
+     * Checks WGS84 UTM coordinates and zones for locations in both hemispheres.
+     * Expected values have three decimal places; allowed error is 0.5 metres.
+     */
     @Test
     fun `Should convert Coordinates to UTM correctly`() {
         data class ReferenceCase(

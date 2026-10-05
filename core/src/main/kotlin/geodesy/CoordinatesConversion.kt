@@ -167,7 +167,7 @@ fun Coordinates.toUTM() : UTMCoordinates {
         "UTM conversion supports latitudes between -80 and 84 degrees."
     }
 
-    val zone = (((this.longitude + 180.0) / 6.0).toInt() + 1).coerceIn(1 ,60)
+    val zone = this.toUTMZone()
     val centralMeridian = (zone * 6.0) - 183.0
 
     val radiansLat = Math.toRadians(this.latitude)
@@ -211,6 +211,11 @@ fun Coordinates.toUTM() : UTMCoordinates {
     )
 
     return utm
+}
+
+private fun Coordinates.toUTMZone(): Int {
+    return (((longitude + 180.0) / 6.0).toInt() + 1)
+        .coerceIn(1, 60)
 }
 
 fun Double.primeVerticalRadius() = WGS84.A / (sqrt(1 - WGS84.E2 * sin(this).pow(2.0)))

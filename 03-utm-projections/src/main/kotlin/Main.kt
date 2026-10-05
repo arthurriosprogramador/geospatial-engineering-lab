@@ -63,8 +63,14 @@ private fun chooseCalculusOption(option: Int) {
 
 private fun calculateCoordinatesToUTM() {
     println("Coordinates:")
-    val latitude = readDouble("Enter anchor latitude (e.g.: -47.356): ")
-    val longitude = readDouble("Enter anchor longitude (e.g.: -47.356): ")
+    var latitude = readDouble("Enter anchor latitude (e.g.: -47.356): ")
+    while (latitude !in -80.0..84.0) {
+        latitude = readDouble("Invalid Latitude. Latitude should be between -80.0 to 84.0 to convert coordinates to UTM: ")
+    }
+    var longitude = readDouble("Enter anchor longitude (e.g.: -47.356): ")
+    while (longitude !in -180.0..180.0) {
+        longitude = readDouble("Invalid Longitude. Longitude should be between -180.0 to 180.0 to convert coordinates to UTM: ")
+    }
     val coordinates = Coordinates(latitude, longitude, 0.0)
     println()
 
