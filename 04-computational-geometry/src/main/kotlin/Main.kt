@@ -162,7 +162,11 @@ fun readPolygon(): Polygon2D {
         val holes = mutableListOf<LinearRing2D>()
 
         if (hasHoles) {
-            val count = readInt(holesQuantityPrompt)
+            var count = readInt(holesQuantityPrompt)
+            while (count < 1) {
+                println("Enter at least one hole, or choose 'n' at the previous prompt.")
+                count = readInt(holesQuantityPrompt)
+            }
             for (i in 0 until count) {
                 holes.add(readLinearRing(holePrompt))
             }
