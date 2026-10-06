@@ -1,6 +1,7 @@
 import area.area
 import area.isCounterClockwise
 import formatter.formatNumber
+import kotlinx.collections.immutable.toImmutableList
 import model.LinearRing2D
 import model.Polygon2D
 import spatial.contains
@@ -165,6 +166,6 @@ fun readPolygon(): Polygon2D {
             holes.add(readLinearRing(holePrompt))
         }
     }
-    return Polygon2D(exteriorRing, holes)
+    return Polygon2D(exteriorRing, holes.toImmutableList())
 }
 

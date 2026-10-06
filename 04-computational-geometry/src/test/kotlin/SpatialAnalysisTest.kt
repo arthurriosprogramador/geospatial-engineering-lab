@@ -28,7 +28,7 @@ class SpatialAnalysisTest {
 
     private val polygonWithHole = Polygon2D(
         exteriorRing = exterior,
-        interiorRings = listOf(hole)
+        interiorRings = persistentListOf(hole)
     )
 
     @Test

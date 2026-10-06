@@ -53,4 +53,26 @@ data class Segment2D(
 
         return distanceToLine <= tolerance && withinX && withinY
     }
+
+    fun intersects(other: Segment2D): Boolean {
+        fun oppositeSides(a: Double, b: Double): Boolean =
+            (a > 0.0 && b < 0.0) ||
+                    (a < 0.0 && b > 0.0)
+
+        val crosses =
+            oppositeSides(
+                orientationOf(other.start),
+                orientationOf(other.end)
+            ) &&
+                    oppositeSides(
+                        other.orientationOf(start),
+                        other.orientationOf(end)
+                    )
+
+        return crosses ||
+                isPointOnSegment(other.start) ||
+                isPointOnSegment(other.end) ||
+                other.isPointOnSegment(start) ||
+                other.isPointOnSegment(end)
+    }
 }

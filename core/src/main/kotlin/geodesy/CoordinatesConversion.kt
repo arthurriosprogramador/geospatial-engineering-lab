@@ -214,8 +214,14 @@ fun Coordinates.toUTM() : UTMCoordinates {
 }
 
 private fun Coordinates.toUTMZone(): Int {
-    return (((longitude + 180.0) / 6.0).toInt() + 1)
-        .coerceIn(1, 60)
+    return when {
+        (latitude in 56.0..<64.0 && longitude >= 3.0 && longitude < 12.0) -> 32
+        (latitude in 72.0..<84.0 && longitude in 0.0..<9.0) -> 31
+        (latitude in 72.0..<84.0 && longitude in 9.0..<21.0) -> 33
+        (latitude in 72.0..<84.0 && longitude in 21.0..<33.0) -> 35
+        (latitude in 72.0..<84.0 && longitude in 33.0..<42.0) -> 37
+        else -> (((longitude + 180.0) / 6.0).toInt() + 1).coerceIn(1, 60)
+    }
 }
 
 fun Double.primeVerticalRadius() = WGS84.A / (sqrt(1 - WGS84.E2 * sin(this).pow(2.0)))

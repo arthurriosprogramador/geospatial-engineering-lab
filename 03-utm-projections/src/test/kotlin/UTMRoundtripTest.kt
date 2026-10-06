@@ -129,8 +129,35 @@ class UTMRoundtripTest {
     }
 
     /**
+     * Checks the UTM zone calculation considering the Norway and Svalbard special cases.
+     */
+    @Test
+    fun `Should get the correct UTM zone for each coordinate`() {
+        data class ZoneCase(
+            val latitude: Double,
+            val longitude: Double,
+            val utmZone: Int
+        )
+
+        val location = listOf(
+            ZoneCase(60.0, 4.0, 32),
+            ZoneCase(75.0, 8.0, 31),
+            ZoneCase(75.0, 9.0, 33),
+            ZoneCase(75.0, 21.0, 35),
+            ZoneCase(75.0, 33.0, 37),
+            ZoneCase(75.0, 42.0, 38)
+        )
+
+        for ((lat, long, utmZone) in location) {
+            val utm = Coordinates(lat, long, 0.0).toUTM()
+            assertEquals( utmZone, utm.zone)
+        }
+    }
+
+    /**
      * Checks WGS84 UTM coordinates and zones for locations in both hemispheres.
      * Expected values have three decimal places; allowed error is 0.5 metres.
+     * Actual values were checked using geographic lib [GeoConvert](https://geographiclib.sourceforge.io/cgi-bin/GeoConvert)
      */
     @Test
     fun `Should convert Coordinates to UTM correctly`() {

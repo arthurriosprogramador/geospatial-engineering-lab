@@ -67,7 +67,7 @@ class AreaAnalysisTest {
 
         val polygonWithHole = Polygon2D(
             exteriorRing = exterior,
-            interiorRings = listOf(hole)
+            interiorRings = persistentListOf(hole)
         )
 
         assertEquals(384.0, polygonWithHole.area(), tolerance)
