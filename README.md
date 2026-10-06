@@ -1,6 +1,6 @@
 # Geospatial Engineering Lab
 
-[![Geospatial Engine CI](https://github.com/arthurriosprogramador/geospatial-engineering-lab/actions/workflows/ci.yml/badge.svg)](https://github.com/arthurriosprogramador/geospatial-engineering-lab/actions/workflows/ci.yml)
+[![Geospatial Engine CI](https://github.com/arthurriosprogramador/geospatial-engineering-lab/actions/workflows/ci.yaml/badge.svg)](https://github.com/arthurriosprogramador/geospatial-engineering-lab/actions/workflows/ci.yaml)
 
 A modular engineering laboratory exploring geodesy algorithms, spatial math, and high-performance computing built with Kotlin.
 
@@ -49,6 +49,8 @@ geospatial-engineering-lab/
 * **Segment Length & Point Orientation:** Computes segment magnitude and evaluates relative point orientation (Left/CCW, Right/CW, Collinear) via 2D cross product.
 * **Ring/Polygon Area (Shoelace & Winding Order):** Implements Green's theorem (Shoelace formula) to compute signed areas, detect vertex winding orders, and calculate net polygon area supporting multiple interior rings (holes).
 * **Point-in-Polygon Containment (Ray Casting):** Validates point containment across complex topologies with interior holes using ray casting, half-open vertical interval rules, and $O(1)$ bounding box pre-filtering.
+* **Polygon Boundaries:** Points on the exterior edge or a hole edge are outside the polygon. Holes must lie strictly inside the exterior ring and cannot touch or overlap one another.
+* **Edge Tolerance:** `Segment2D.isPointOnSegment()` uses an absolute tolerance of `1e-6` in the coordinate units to check whether a point lies on an edge. Other geometry calculations do not share a general tolerance.
 * **Automated Tests:** Comprehensive unit test suite validating spatial containment, vertex edge cases, and net area calculations.
 
 ### `05-spatial-indexing`

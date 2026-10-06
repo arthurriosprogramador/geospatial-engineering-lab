@@ -10,43 +10,44 @@ data class Polygon2D(
 ) {
     init {
         for (hole in interiorRings) {
-            require(hole.vertices.all { vertex ->
-                exteriorRing.contains(vertex)
-            }) {
-                "Every hole vertex must be strictly inside the exterior ring."
-            }
-
-            require(hole.segments.none { holeEdge ->
-                exteriorRing.segments.any { exteriorEdge ->
-                    holeEdge.intersects(exteriorEdge)
-                }
-            }) {
-                "Hole edges cannot cross or touch the exterior boundary."
-            }
+            validateHoleInsideExterior(hole)
         }
 
         for (firstHoleIndex in interiorRings.indices) {
             for (secondHoleIndex in firstHoleIndex + 1 until interiorRings.size) {
-                val firstHole = interiorRings[firstHoleIndex]
-                val secondHole = interiorRings[secondHoleIndex]
-
-                require(firstHole.segments.none { firstEdge ->
-                    secondHole.segments.any { secondEdge ->
-                        firstEdge.intersects(secondEdge)
-                    }
-                }) {
-                    "Holes cannot overlap or touch."
-                }
-
-                require(
-                    !firstHole.contains(secondHole.vertices.first()) &&
-                            !secondHole.contains(firstHole.vertices.first())
-                ) {
-                    "A hole cannot contain another hole."
-                }
+                validateHolePair(interiorRings[firstHoleIndex], interiorRings[secondHoleIndex])
             }
         }
     }
+
+    private fun validateHoleInsideExterior(hole: LinearRing2D) {
+        require(hole.vertices.all(exteriorRing::contains)) {
+            "Every hole vertex must be strictly inside the exterior ring."
+        }
+
+        require(!ringsIntersect(hole, exteriorRing)) {
+            "Hole edges cannot cross or touch the exterior boundary."
+        }
+    }
+
+    private fun validateHolePair(firstHole: LinearRing2D, secondHole: LinearRing2D) {
+        require(!ringsIntersect(firstHole, secondHole)) {
+            "Holes cannot overlap or touch."
+        }
+
+        require(
+            !firstHole.contains(secondHole.vertices.first()) &&
+                !secondHole.contains(firstHole.vertices.first())
+        ) {
+            "A hole cannot contain another hole."
+        }
+    }
+
+    private fun ringsIntersect(first: LinearRing2D, second: LinearRing2D): Boolean =
+        first.segments.any { firstEdge ->
+            second.segments.any { secondEdge -> firstEdge.intersects(secondEdge) }
+        }
+
     /**
      * Polygon general bounding box (exclusively defined by its outer ring)
      */

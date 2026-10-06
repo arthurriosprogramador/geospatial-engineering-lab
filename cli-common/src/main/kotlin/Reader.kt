@@ -117,9 +117,16 @@ fun readLinearRing(prompt: String): LinearRing2D {
         }
 
        val pointList = parsePoints(values)
+        if (pointList.size != values.size) {
+            println("Invalid format. Example: '0 0, 3 0, 0 4'.")
+            continue
+        }
 
-        if (pointList.size == values.size && pointList.size >= 3) return LinearRing2D(pointList.toImmutableList())
-        println("Please provide at least 3 points to make a linear ring using the correct format: 'x1 y1, x2 y2, x3 y3'.")
+        try {
+            return LinearRing2D(pointList.toImmutableList())
+        } catch (e: IllegalArgumentException) {
+            println("Invalid ring: ${e.message}")
+        }
     }
 }
 

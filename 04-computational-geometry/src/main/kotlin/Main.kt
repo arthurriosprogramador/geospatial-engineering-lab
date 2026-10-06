@@ -155,17 +155,24 @@ private fun calculatePointInPolygonContainment() {
 }
 
 fun readPolygon(): Polygon2D {
-    val exteriorRing = readLinearRing(exteriorRingPrompt)
-    val hasHoles = readBoolean(hasHolePrompt)
+    while (true) {
+        val exteriorRing = readLinearRing(exteriorRingPrompt)
+        val hasHoles = readBoolean(hasHolePrompt)
 
-    val holes = mutableListOf<LinearRing2D>()
+        val holes = mutableListOf<LinearRing2D>()
 
-    if (hasHoles) {
-        val count = readInt(holesQuantityPrompt)
-        for (i in 0 until count) {
-            holes.add(readLinearRing(holePrompt))
+        if (hasHoles) {
+            val count = readInt(holesQuantityPrompt)
+            for (i in 0 until count) {
+                holes.add(readLinearRing(holePrompt))
+            }
+        }
+
+        try {
+            return Polygon2D(exteriorRing, holes.toImmutableList())
+        } catch (e: IllegalArgumentException) {
+            println("Invalid polygon: ${e.message}")
         }
     }
-    return Polygon2D(exteriorRing, holes.toImmutableList())
 }
 

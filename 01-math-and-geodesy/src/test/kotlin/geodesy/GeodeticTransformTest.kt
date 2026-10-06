@@ -36,6 +36,30 @@ class GeodeticTransformTest {
     }
 
     @Test
+    fun `should convert north pole ECEF to geodetic coordinates`() {
+        val coordinates = ECEF(0.0, 0.0, WGS84.B).toCoordinates()
+
+        assertEquals(90.0, coordinates.latitude)
+        assertEquals(0.0, coordinates.altitude)
+    }
+
+    @Test
+    fun `should convert north pole at 100m altitude ECEF to geodetic coordinates`() {
+        val coordinates = ECEF(0.0, 0.0, WGS84.B + 100.0).toCoordinates()
+
+        assertEquals(90.0, coordinates.latitude)
+        assertEquals(100.0, coordinates.altitude)
+    }
+
+    @Test
+    fun `should convert south pole at 0m altitude ECEF to geodetic coordinates`() {
+        val coordinates = ECEF(0.0, 0.0, -WGS84.B).toCoordinates()
+
+        assertEquals(-90.0, coordinates.latitude)
+        assertEquals(0.0, coordinates.altitude)
+    }
+
+    @Test
     fun `should recover altitude close to both poles with nonzero horizontal distance`() {
         for (sign in listOf(1.0, -1.0)) {
             val ecef = ECEF(x = 0.01, y = 0.0, z = sign * (WGS84.B + 100.0))

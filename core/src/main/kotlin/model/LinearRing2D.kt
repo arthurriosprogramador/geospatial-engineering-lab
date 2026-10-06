@@ -6,10 +6,25 @@ data class LinearRing2D(
     val vertices: ImmutableList<Point2D>,
 ) {
     init {
-        require(vertices.size >= 3){
+        require(vertices.size >= 3) {
             "A geometric ring needs at least three points."
         }
 
+        validateNonCollinearVertices()
+
+        val edges = vertices.indices.map { index ->
+            Segment2D(vertices[index], vertices[(index + 1) % vertices.size])
+        }
+
+        require(edges.none { it.start == it.end }) {
+            "Consecutive vertices cannot be identical."
+        }
+
+        validateNonIntersectingEdges(edges)
+        validateNonOverlappingNeighbours(edges)
+    }
+
+    private fun validateNonCollinearVertices() {
         val firstVertex = vertices.first()
         val secondVertex = vertices.firstOrNull { it != firstVertex }
 
@@ -24,17 +39,14 @@ data class LinearRing2D(
         }) {
             "The vertices cannot all lie on the same line."
         }
+    }
 
-        val edges = vertices.indices.map { vertexIndex ->
-            val nextVertexIndex = (vertexIndex + 1) % vertices.size
-            Segment2D(vertices[vertexIndex], vertices[nextVertexIndex])
-        }
-
+    private fun validateNonIntersectingEdges(edges: List<Segment2D>) {
         for (firstEdgeIndex in edges.indices) {
             for (secondEdgeIndex in firstEdgeIndex + 1 until edges.size) {
                 val areNeighbours =
                     secondEdgeIndex == firstEdgeIndex + 1 ||
-                            (firstEdgeIndex == 0 && secondEdgeIndex == edges.lastIndex)
+                        (firstEdgeIndex == 0 && secondEdgeIndex == edges.lastIndex)
 
                 if (areNeighbours) continue
 
@@ -46,26 +58,22 @@ data class LinearRing2D(
                 }
             }
         }
+    }
 
-        require(edges.none { edge -> edge.start == edge.end }) {
-            "Consecutive vertices cannot be identical."
-        }
-
+    private fun validateNonOverlappingNeighbours(edges: List<Segment2D>) {
         for (vertexIndex in vertices.indices) {
-            val previousIndex =
-                (vertexIndex + vertices.size - 1) % vertices.size
+            val previousIndex = (vertexIndex + vertices.size - 1) % vertices.size
             val nextIndex = (vertexIndex + 1) % vertices.size
 
             val previousVertex = vertices[previousIndex]
-            val currentVertex = vertices[vertexIndex]
             val nextVertex = vertices[nextIndex]
 
-            val incomingEdge = Segment2D(previousVertex, currentVertex)
-            val outgoingEdge = Segment2D(currentVertex, nextVertex)
+            val incomingEdge = edges[previousIndex]
+            val outgoingEdge = edges[vertexIndex]
 
             val overlaps =
                 incomingEdge.isPointOnSegment(nextVertex) ||
-                        outgoingEdge.isPointOnSegment(previousVertex)
+                    outgoingEdge.isPointOnSegment(previousVertex)
 
             require(!overlaps) {
                 "Neighbouring edges cannot fold back and overlap."

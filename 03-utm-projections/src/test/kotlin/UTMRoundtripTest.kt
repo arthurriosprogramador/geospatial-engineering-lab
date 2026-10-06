@@ -1,8 +1,6 @@
-import datum.WGS84
 import geodesy.toCoordinates
 import geodesy.toUTM
 import model.Coordinates
-import model.ECEF
 import model.Hemisphere
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -56,80 +54,9 @@ class UTMRoundtripTest {
         assertEquals(Hemisphere.NORTH, utm.hemisphere)
     }
 
-    @Test
-    fun `should convert north pole ECEF to geodetic coordinates`() {
-        val ecef = ECEF(
-            x = 0.0,
-            y = 0.0,
-            z = WGS84.B
-        )
-
-        val coordinates = ecef.toCoordinates()
-
-        println("ECEF: x=${ecef.x}, y=${ecef.y}, z=${ecef.z}")
-        println("Latitude: radians=${Math.toRadians(coordinates.latitude)}, degrees=${coordinates.latitude}")
-        println("Altitude: ${coordinates.altitude}")
-
-        assertEquals(
-            expected = 90.0,
-            actual = coordinates.latitude
-        )
-        assertEquals(
-            expected = 0.0,
-            actual = coordinates.altitude
-        )
-    }
-
-    @Test
-    fun `should convert north pole at 100m altitude ECEF to geodetic coordinates`() {
-        val ecef = ECEF(
-            x = 0.0,
-            y = 0.0,
-            z = WGS84.B + 100.0
-        )
-
-        val coordinates = ecef.toCoordinates()
-
-        println("ECEF: x=${ecef.x}, y=${ecef.y}, z=${ecef.z}")
-        println("Latitude: radians=${Math.toRadians(coordinates.latitude)}, degrees=${coordinates.latitude}")
-        println("Altitude: ${coordinates.altitude}")
-
-        assertEquals(
-            expected = 90.0,
-            actual = coordinates.latitude
-        )
-        assertEquals(
-            expected = 100.0,
-            actual = coordinates.altitude
-        )
-    }
-
-    @Test
-    fun `should convert south pole at 0m altitude ECEF to geodetic coordinates`() {
-        val ecef = ECEF(
-            x = 0.0,
-            y = 0.0,
-            z = -WGS84.B
-        )
-
-        val coordinates = ecef.toCoordinates()
-
-        println("ECEF: x=${ecef.x}, y=${ecef.y}, z=${ecef.z}")
-        println("Latitude: radians=${Math.toRadians(coordinates.latitude)}, degrees=${coordinates.latitude}")
-        println("Altitude: ${coordinates.altitude}")
-
-        assertEquals(
-            expected = -90.0,
-            actual = coordinates.latitude
-        )
-        assertEquals(
-            expected = 0.0,
-            actual = coordinates.altitude
-        )
-    }
-
     /**
-     * Checks the UTM zone calculation considering the Norway and Svalbard special cases.
+     * Checks Norway and Svalbard UTM zone boundaries.
+     * Expected zones follow [GeographicLib's rules](https://geographiclib.sourceforge.io/2009-03/UTMUPS_8cpp_source.html).
      */
     @Test
     fun `Should get the correct UTM zone for each coordinate`() {
@@ -140,7 +67,13 @@ class UTMRoundtripTest {
         )
 
         val location = listOf(
+            ZoneCase(55.999999, 4.0, 31),
+            ZoneCase(56.0,      4.0, 32),
             ZoneCase(60.0, 4.0, 32),
+            ZoneCase(63.999999, 4.0, 32),
+            ZoneCase(64.0,      4.0, 31),
+            ZoneCase(71.999999, 10.0, 32),
+            ZoneCase(72.0,      10.0, 33),
             ZoneCase(75.0, 8.0, 31),
             ZoneCase(75.0, 9.0, 33),
             ZoneCase(75.0, 21.0, 35),
@@ -155,9 +88,9 @@ class UTMRoundtripTest {
     }
 
     /**
-     * Checks WGS84 UTM coordinates and zones for locations in both hemispheres.
-     * Expected values have three decimal places; allowed error is 0.5 metres.
-     * Actual values were checked using geographic lib [GeoConvert](https://geographiclib.sourceforge.io/cgi-bin/GeoConvert)
+     * Checks UTM coordinates against values generated with pyproj 3.7.2.
+     * Input: WGS84 (EPSG:4326), longitude then latitude; output: each listed UTM zone.
+     * Easting and northing are rounded to 0.001 m; tolerance is 0.5 m.
      */
     @Test
     fun `Should convert Coordinates to UTM correctly`() {

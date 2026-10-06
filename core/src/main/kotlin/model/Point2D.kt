@@ -4,6 +4,11 @@ data class Point2D(
     val x : Double,
     val y: Double
 ) {
+    init {
+        require(x.isFinite()) { "x must be finite." }
+        require(y.isFinite()) { "y must be finite." }
+    }
+
     /**
      * Subtracts two points results in a vector that points to [other] until [this].
      *
