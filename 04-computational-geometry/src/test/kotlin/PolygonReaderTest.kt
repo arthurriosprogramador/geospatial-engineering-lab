@@ -42,6 +42,26 @@ class PolygonReaderTest {
         }
     }
 
+    @Test
+    fun `readPolygon retries invalid hole counts and uses the valid count`() {
+        val polygon = withConsoleInput(
+            "0 0, 10 0, 10 10, 0 10\n" +
+                "y\n" +
+                "0\n" +
+                "-1\n" +
+                "1\n" +
+                "2 2, 4 2, 4 4, 2 4\n"
+        ) {
+            readPolygon()
+        }
+
+        assertEquals(1, polygon.interiorRings.size)
+        assertEquals(
+            listOf(Point2D(2.0, 2.0), Point2D(4.0, 2.0), Point2D(4.0, 4.0), Point2D(2.0, 4.0)),
+            polygon.interiorRings.single().vertices
+        )
+    }
+
     private fun <T> withConsoleInput(input: String, action: () -> T): T {
         val originalInput = System.`in`
         val originalOutput = System.out

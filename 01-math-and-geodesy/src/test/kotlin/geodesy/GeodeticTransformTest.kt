@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test
 import kotlin.math.pow
 import kotlin.math.sin
 import kotlin.math.sqrt
+import kotlin.test.assertFailsWith
 
 class GeodeticTransformTest {
     private val degreeTolerance = 1e-5
@@ -80,5 +81,20 @@ class GeodeticTransformTest {
         val expectedN = 6380575.51
 
         assertEquals(expectedN, actual, meterTolerance)
+    }
+
+    @Test
+    fun `Should reject invalid ECEF values`() {
+        val invalidValues = listOf(
+            Double.NaN,
+            Double.POSITIVE_INFINITY,
+            Double.NEGATIVE_INFINITY
+        )
+
+        for (value in invalidValues) {
+            assertFailsWith<IllegalArgumentException> { ECEF(value, 0.0, 0.0) }
+            assertFailsWith<IllegalArgumentException> { ECEF(0.0, value, 0.0) }
+            assertFailsWith<IllegalArgumentException> { ECEF(0.0, 0.0, value) }
+        }
     }
 }
